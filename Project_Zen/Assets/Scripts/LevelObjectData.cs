@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
-/// A class for serializing the data of a non-player object in a level
+/// Class for serializing the data of a non-player object in a level
 /// </summary>
 [Serializable]
 public class LevelObjectData

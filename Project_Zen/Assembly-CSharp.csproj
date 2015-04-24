@@ -47,11 +47,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\LevelObjectType.cs" />
-    <Compile Include="Assets\Scripts\LevelObjectData.cs" />
-    <Compile Include="Assets\Scripts\LevelEditorScript.cs" />
     <Compile Include="Assets\Scripts\LevelData.cs" />
+    <Compile Include="Assets\Scripts\LevelScript.cs" />
+    <Compile Include="Assets\Scripts\LevelEditorScript.cs" />
+    <Compile Include="Assets\Scripts\LevelObjectData.cs" />
+    <Compile Include="Assets\Scripts\LevelObjectScript.cs" />
+    <Compile Include="Assets\Scripts\LevelObjectType.cs" />
     <Compile Include="Assets\Scripts\Serializer.cs" />
+    <Compile Include="Assets\Scripts\UndoHistory.cs" />
     <Reference Include="UnityEngine.UI">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>

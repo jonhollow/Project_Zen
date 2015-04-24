@@ -5,50 +5,77 @@ using System.Collections.Generic;
 /// <summary>
 /// Script that controls the overall level editor - may change significantly over time
 /// </summary>
-public class LevelEditorScript : MonoBehaviour
+public class LevelEditorScript : LevelScript
 {
     #region Fields
 
-    public GameObject block;    // Prefab for the generic block object
+    UndoHistory undoHistory;    // The level editor's undo history
 
-    LevelData levelData;    // The serializable level data
+    #endregion
 
-    Dictionary<LevelObjectType, GameObject> objectPrefabs;  // Dictionary of the level object prefabs
+    #region Public Methods
 
-    List<GameObject> levelObjects;  // The list of objects in the level
+    /// <summary>
+    /// Loads the level from the given file
+    /// </summary>
+    /// <param name="filename">the file name</param>
+    public override void Load(string filename)
+    {
+        // Adds a copy of the current state to the undo history
+        undoHistory.StoreState(levelData.Clone());
+
+        // Loads
+        base.Load(filename);
+    }
+
+    /// <summary>
+    /// Saves the level to the given file
+    /// </summary>
+    /// <param name="filename">the file name</param>
+    public void Save(string filename)
+    {
+        Serializer.SerializeObject(filename, levelData);
+    }
+
+    /// <summary>
+    /// Returns to the previous undo state
+    /// </summary>
+    public void Undo()
+    {
+        if (!undoHistory.Empty)
+        {
+            levelData = undoHistory.GetPreviousState();
+            RestoreToLevelData();
+        }
+    }
+
+    #endregion
+
+    #region Protected Methods
+
+    /// <summary>
+    /// Start is called once on object creation
+    /// </summary>
+    protected override void Start()
+    {
+        base.Start();
+
+        // Initializes fields
+        undoHistory = new UndoHistory();
+    }
 
     #endregion
 
     #region Private Methods
 
     /// <summary>
-	/// Start is called once on object creation
-	/// </summary>
-	private void Start() 
-    {
-        // Initializes fields
-        levelData = new LevelData();
-        levelObjects = new List<GameObject>();
-        objectPrefabs = new Dictionary<LevelObjectType, GameObject>();
-
-        // Adds blocks to the object prefab dictionary
-        objectPrefabs.Add(LevelObjectType.Block, block);
-	}
-	
-	/// <summary>
     /// Update is called once per frame
 	/// </summary>
 	private void Update() 
     {
-        // Checks for load level on T and save on R -- temporary
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Load("testSave");
-        }
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Save("testSave");
-        }
+        // Checks for undo on Z
+        if (Input.GetKeyDown(KeyCode.Z))
+        { Undo(); }
     }
 
     /// <summary>
@@ -57,6 +84,9 @@ public class LevelEditorScript : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
+        // Adds a copy of the current state to the undo history
+        undoHistory.StoreState(levelData.Clone());
+
         // Gets the mouse position in world space
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = 0;
@@ -64,40 +94,14 @@ public class LevelEditorScript : MonoBehaviour
         // Creates a block where the mouse is and adds it to the object list
         levelObjects.Add((GameObject)Instantiate(block, mousePosition, transform.rotation));
 
+        // Creates a unique ID for the new object
+        string newID = "Object" + Random.Range(int.MinValue, int.MaxValue);
+        while (levelData.Objects.ContainsKey(newID))
+        { newID = "Object" + Random.Range(int.MinValue, int.MaxValue); }
+        levelObjects[levelObjects.Count - 1].GetComponent<LevelObjectScript>().ID = newID;
+
         // Adds the block to the level data
-        levelData.Objects.Add(new LevelObjectData(mousePosition, LevelObjectType.Block));
-    }
-
-    /// <summary>
-    /// Saves the level to the given file
-    /// </summary>
-    /// <param name="filename">the file name</param>
-    private void Save(string filename)
-    {
-        Serializer.SerializeObject("testSave", levelData);
-    }
-
-    /// <summary>
-    /// Loads the level from the given file
-    /// </summary>
-    /// <param name="filename">the file name</param>
-    private void Load(string filename)
-    {
-        // Reloads the level data
-        levelData = (LevelData)Serializer.DeserializeObject("testSave");
-
-        // Destroys everything currently in the scene
-        for (int i = levelObjects.Count - 1; i >= 0; i--)
-        {
-            Destroy(levelObjects[i]);
-            levelObjects.RemoveAt(i);
-        }
-
-        // Reconstructs the scene
-        foreach (LevelObjectData levelObject in levelData.Objects)
-        {
-            levelObjects.Add((GameObject)Instantiate(objectPrefabs[levelObject.Type], levelObject.Position, transform.rotation));
-        }
+        levelData.Objects.Add(newID, new LevelObjectData(mousePosition, LevelObjectType.Block));
     }
 
     #endregion

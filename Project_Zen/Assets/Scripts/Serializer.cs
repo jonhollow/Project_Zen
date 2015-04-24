@@ -40,16 +40,19 @@ public static class Serializer
     /// <returns>the deserialized object</returns>
     public static System.Object DeserializeObject(string filename)
     {
-        System.Object deserializedObject;   // The object to be deserialized
+        System.Object deserializedObject = null;    // The object to be deserialized
 
-        // Opens the file
+        // Opens the file if it exists
         string filePath = Application.persistentDataPath + "/" + filename;
-        FileStream stream = new FileStream(filePath, FileMode.Open);
+        if (File.Exists(filePath))
+        {
+            FileStream stream = new FileStream(filePath, FileMode.Open);
 
-        // Deserializes and returns the object
-        BinaryFormatter binFormatter = new BinaryFormatter();
-        deserializedObject = binFormatter.Deserialize(stream);
-        stream.Close();
+            // Deserializes and returns the object
+            BinaryFormatter binFormatter = new BinaryFormatter();
+            deserializedObject = binFormatter.Deserialize(stream);
+            stream.Close();
+        }
         return deserializedObject;
     }
 

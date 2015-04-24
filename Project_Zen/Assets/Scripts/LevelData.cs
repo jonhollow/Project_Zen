@@ -9,23 +9,23 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
-/// A class for serializing level data
+/// Class for serializing level data
 /// </summary>
 [Serializable]
 public class LevelData
 {
     #region Fields
 
-    List<LevelObjectData> objects;  // A list of objects in the level
+    Dictionary<string, LevelObjectData> objects;    // Dictionary of the level's objects by ID
 
     #endregion
 
     #region Properties
 
     /// <summary>
-    /// Gets the list of objects in the level
+    /// Gets the dictionary of objects in the level, indexed by ID
     /// </summary>
-    public List<LevelObjectData> Objects
+    public Dictionary<string, LevelObjectData> Objects
     { get { return objects; } }
 
     #endregion
@@ -37,7 +37,29 @@ public class LevelData
     /// </summary>
     public LevelData()
     {
-        objects = new List<LevelObjectData>();
+        objects = new Dictionary<string, LevelObjectData>();
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Makes a copy of the level data
+    /// </summary>
+    /// <returns>the copy</returns>
+    public LevelData Clone()
+    {
+        // Makes a new level data
+        LevelData copyData = new LevelData();
+
+        // Copies over each item of data
+        foreach (KeyValuePair<string, LevelObjectData> data in objects)
+        {
+            copyData.objects.Add(data.Key, new LevelObjectData(data.Value.Position, data.Value.Type));
+        }
+
+        return copyData;
     }
 
     #endregion
