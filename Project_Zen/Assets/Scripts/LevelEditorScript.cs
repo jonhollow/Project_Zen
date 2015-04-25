@@ -9,7 +9,17 @@ public class LevelEditorScript : LevelScript
 {
     #region Fields
 
-    UndoHistory undoHistory;    // The level editor's undo history
+    static UndoHistory undoHistory; // The level editor's undo history
+
+    #endregion
+
+    #region Properties
+
+    /// <summary>
+    /// Gets and sets the placer object for the editor
+    /// </summary>
+    public static GameObject PlacerObject
+    { get; set; }
 
     #endregion
 
@@ -49,6 +59,30 @@ public class LevelEditorScript : LevelScript
         }
     }
 
+    /// <summary>
+    /// Creates an object in the level
+    /// </summary>
+    /// <param name="type">the type of object to create</param>
+    /// <param name="position">the position at which to create the object</param>
+    /// <param name="rotation">the rotation for the object</param>
+    public static void CreateLevelObject(LevelObjectType type, Vector2 position, Quaternion rotation)
+    {
+        // Adds a copy of the current state to the undo history
+        undoHistory.StoreState(levelData.Clone());
+
+        // Creates an object at the provided position and adds it to the object list
+        levelObjects.Add((GameObject)Instantiate(ObjectPrefabs[type], position, rotation));
+
+        // Creates a unique ID for the new object
+        string newID;
+        do { newID = "Object" + Random.Range(int.MinValue, int.MaxValue); } 
+        while (levelData.Objects.ContainsKey(newID));
+        levelObjects[levelObjects.Count - 1].GetComponent<LevelObjectScript>().ID = newID;
+
+        // Adds new object to the level data
+        levelData.Objects.Add(newID, new LevelObjectData(position, type));
+    }
+
     #endregion
 
     #region Protected Methods
@@ -78,31 +112,14 @@ public class LevelEditorScript : LevelScript
         { Undo(); }
     }
 
-    /// <summary>
-    /// OnMouseDown is called when the mouse clicks this object's collider
-    /// NOTE: Probably not actually going to keep this method, just nice for testing
-    /// </summary>
-    private void OnMouseDown()
-    {
-        // Adds a copy of the current state to the undo history
-        undoHistory.StoreState(levelData.Clone());
-
-        // Gets the mouse position in world space
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z = 0;
-
-        // Creates a block where the mouse is and adds it to the object list
-        levelObjects.Add((GameObject)Instantiate(block, mousePosition, transform.rotation));
-
-        // Creates a unique ID for the new object
-        string newID = "Object" + Random.Range(int.MinValue, int.MaxValue);
-        while (levelData.Objects.ContainsKey(newID))
-        { newID = "Object" + Random.Range(int.MinValue, int.MaxValue); }
-        levelObjects[levelObjects.Count - 1].GetComponent<LevelObjectScript>().ID = newID;
-
-        // Adds the block to the level data
-        levelData.Objects.Add(newID, new LevelObjectData(mousePosition, LevelObjectType.Block));
-    }
+    ///// <summary>
+    ///// OnMouseDown is called when the mouse clicks this object's collider
+    ///// NOTE: Probably not actually going to keep this method, just nice for testing
+    ///// </summary>
+    //private void OnMouseDown()
+    //{
+    //    CreateLevelObject(LevelObjectType.Block, LevelScript.GetMousePosition(), transform.rotation);
+    //}
 
     #endregion
 }

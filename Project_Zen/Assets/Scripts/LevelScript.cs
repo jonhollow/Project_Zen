@@ -11,11 +11,21 @@ public class LevelScript : MonoBehaviour
 
     public GameObject block;    // Prefab for the generic block object
 
-    protected LevelData levelData;  // The serializable level data
+    protected static LevelData levelData;   // The serializable level data
 
-    protected List<GameObject> levelObjects;    // The list of objects in the level
+    protected static List<GameObject> levelObjects; // The list of objects in the level
 
-    Dictionary<LevelObjectType, GameObject> objectPrefabs;  // Dictionary of the level object prefabs
+    static Dictionary<LevelObjectType, GameObject> objectPrefabs;   // Dictionary of the level object prefabs
+
+    #endregion
+
+    #region Properties
+
+    /// <summary>
+    /// Gets the dictionary of level object prefabs
+    /// </summary>
+    public static Dictionary<LevelObjectType, GameObject> ObjectPrefabs
+    { get { return objectPrefabs; } }
 
     #endregion
 
@@ -34,6 +44,15 @@ public class LevelScript : MonoBehaviour
             levelData = loadedData;
             RestoreToLevelData();
         }
+    }
+
+    /// <summary>
+    /// Gets the mouse's position in world space
+    /// </summary>
+    /// <returns>the mouse position</returns>
+    public static Vector2 GetMousePosition()
+    {
+        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     #endregion

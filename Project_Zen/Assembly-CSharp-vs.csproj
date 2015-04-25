@@ -46,12 +46,15 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Constants.cs" />
      <Compile Include="Assets\Scripts\LevelData.cs" />
      <Compile Include="Assets\Scripts\LevelEditorScript.cs" />
      <Compile Include="Assets\Scripts\LevelObjectData.cs" />
      <Compile Include="Assets\Scripts\LevelObjectScript.cs" />
      <Compile Include="Assets\Scripts\LevelObjectType.cs" />
      <Compile Include="Assets\Scripts\LevelScript.cs" />
+     <Compile Include="Assets\Scripts\PlaceButtonScript.cs" />
+     <Compile Include="Assets\Scripts\PlacerObjectScript.cs" />
      <Compile Include="Assets\Scripts\Serializer.cs" />
      <Compile Include="Assets\Scripts\UndoHistory.cs" />
  <Reference Include="UnityEngine.UI">
