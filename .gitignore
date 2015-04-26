@@ -42,4 +42,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+*.dll
+
 Project_Zen/Library
+Project_Zen/Temp
+Project_Zen/obj
+Project_Zen/Assets/UnityVS
