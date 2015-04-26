@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\Actors\Controller2D.cs" />
      <Compile Include="Assets\Scripts\Actors\Player.cs" />
      <Compile Include="Assets\Scripts\Constants.cs" />
+     <Compile Include="Assets\Scripts\GameLevelScript.cs" />
      <Compile Include="Assets\Scripts\LevelData.cs" />
      <Compile Include="Assets\Scripts\LevelEditorScript.cs" />
      <Compile Include="Assets\Scripts\LevelObjectData.cs" />
@@ -57,7 +58,10 @@
      <Compile Include="Assets\Scripts\LevelScript.cs" />
      <Compile Include="Assets\Scripts\PlaceButtonScript.cs" />
      <Compile Include="Assets\Scripts\PlacerObjectScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerStartPositionScript.cs" />
      <Compile Include="Assets\Scripts\Serializer.cs" />
+     <Compile Include="Assets\Scripts\Timer.cs" />
+     <Compile Include="Assets\Scripts\TimerFinishedEvent.cs" />
      <Compile Include="Assets\Scripts\UndoHistory.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

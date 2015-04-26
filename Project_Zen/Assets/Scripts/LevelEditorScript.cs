@@ -94,6 +94,9 @@ public class LevelEditorScript : LevelScript
     {
         base.Start();
 
+        // Sets in level editor
+        InLevelEditor = true;
+
         // Initializes fields
         undoHistory = new UndoHistory();
     }

@@ -1,0 +1,25 @@
+﻿using UnityEngine;
+using System.Collections;
+
+/// <summary>
+/// Script that controls a player start position object
+/// </summary>
+public class PlayerStartPositionScript : LevelObjectScript
+{
+    #region Private Methods
+
+    /// <summary>
+    /// Start is called once on object creation
+    /// </summary>
+    private void Start()
+    {
+        // Spawns a player if in an actual level
+        if (!LevelScript.InLevelEditor)
+        {
+            Instantiate(LevelScript.ObjectPrefabs[LevelObjectType.Player], transform.position, transform.rotation);
+            Destroy(gameObject);
+        }
+    }
+
+    #endregion
+}

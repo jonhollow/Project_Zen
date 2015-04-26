@@ -12,5 +12,9 @@ public static class Constants
 
     public const KeyCode CANCEL_KEY = KeyCode.Escape;   // Key to cancel placement of an object
 
+    // Input constants
+    public const string MOVE_INPUT_AXIS = "Horizontal";
+    public const string JUMP_INPUT_AXIS = "Jump";
+
     #endregion
 }

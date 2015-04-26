@@ -9,13 +9,14 @@ public class LevelScript : MonoBehaviour
 {
     #region Fields
 
-    public GameObject block;    // Prefab for the generic block object
+    public GameObject blockPrefab;          // Prefab for the generic block object
+    public GameObject playerStartPrefab;    // Prefab for the player start position object
 
     protected static LevelData levelData;   // The serializable level data
 
     protected static List<GameObject> levelObjects; // The list of objects in the level
 
-    static Dictionary<LevelObjectType, GameObject> objectPrefabs;   // Dictionary of the level object prefabs
+    protected static Dictionary<LevelObjectType, GameObject> objectPrefabs;   // Dictionary of the level object prefabs
 
     #endregion
 
@@ -26,6 +27,12 @@ public class LevelScript : MonoBehaviour
     /// </summary>
     public static Dictionary<LevelObjectType, GameObject> ObjectPrefabs
     { get { return objectPrefabs; } }
+
+    /// <summary>
+    /// Gets or sets whether the game is in the level editor or an actual level
+    /// </summary>
+    public static bool InLevelEditor
+    { get; set; }
 
     #endregion
 
@@ -69,8 +76,9 @@ public class LevelScript : MonoBehaviour
         levelObjects = new List<GameObject>();
         objectPrefabs = new Dictionary<LevelObjectType, GameObject>();
 
-        // Adds blocks to the object prefab dictionary
-        objectPrefabs.Add(LevelObjectType.Block, block);
+        // Adds objects to the object prefab dictionary
+        objectPrefabs.Add(LevelObjectType.Block, blockPrefab);
+        objectPrefabs.Add(LevelObjectType.PlayerStart, playerStartPrefab);
     }
 
     /// <summary>

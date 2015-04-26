@@ -6,5 +6,7 @@ using System.Collections.Generic;
 /// </summary>
 public enum LevelObjectType
 {
-    Block
+    Block,
+    PlayerStart,
+    Player
 }
