@@ -63,5 +63,13 @@ public class UndoHistory
         return prevStates.Pop();
     }
 
+    /// <summary>
+    /// Clears the undo history
+    /// </summary>
+    public void Clear()
+    {
+        prevStates.Clear();
+    }
+
     #endregion
 }

@@ -26,7 +26,7 @@ public class PlacerObjectScript : MonoBehaviour
             currentType = value;
 
             // Changes sprite to match the new type
-            spriteRenderer.sprite = LevelScript.ObjectPrefabs[currentType].GetComponent<SpriteRenderer>().sprite;
+            spriteRenderer.sprite = GameController.Instance.ObjectPrefabs[currentType].GetComponent<SpriteRenderer>().sprite;
         }
     }
 
@@ -40,7 +40,7 @@ public class PlacerObjectScript : MonoBehaviour
 	private void Start() 
     {
 	    // Sets the static reference to this object
-        LevelEditorScript.PlacerObject = gameObject;
+        GameController.Instance.PlacerObject = gameObject;
 
         // Stores the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -55,7 +55,7 @@ public class PlacerObjectScript : MonoBehaviour
 	private void Update() 
     {
 	    // Moves to the mouse position, clamped to the grid
-        Vector2 position = LevelScript.GetMousePosition();
+        Vector2 position = GameController.Instance.MousePosition;
         position /= Constants.GRID_SIZE;
         position.x = (int)position.x;
         position.y = (int)position.y;
@@ -73,7 +73,7 @@ public class PlacerObjectScript : MonoBehaviour
     private void OnMouseDown()
     {
         // Creates an object at the current location
-        LevelEditorScript.CreateLevelObject(currentType, transform.position, transform.rotation);
+        GameController.Instance.CreateLevelObject(currentType, transform.position, transform.rotation);
 
         // Deactivates the placer object
         gameObject.SetActive(false);

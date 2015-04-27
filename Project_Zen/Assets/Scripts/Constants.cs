@@ -12,9 +12,9 @@ public static class Constants
 
     public const KeyCode CANCEL_KEY = KeyCode.Escape;   // Key to cancel placement of an object
 
-    // Input constants
-    public const string MOVE_INPUT_AXIS = "Horizontal";
-    public const string JUMP_INPUT_AXIS = "Jump";
+    public const string EDITOR_SCENE = "LevelEditor";   // The name of the level editor scene
+    public const string GAME_SCENE = "Game";            // The name of the game scene
+    public const string MAIN_MENU_SCENE = "MainMenu";   // The name of the main menu scene
 
     #endregion
 }

@@ -14,9 +14,9 @@ public class PlayerStartPositionScript : LevelObjectScript
     private void Start()
     {
         // Spawns a player if in an actual level
-        if (!LevelScript.InLevelEditor)
+        if (!GameController.Instance.InLevelEditor)
         {
-            Instantiate(LevelScript.ObjectPrefabs[LevelObjectType.Player], transform.position, transform.rotation);
+            Instantiate(GameController.Instance.ObjectPrefabs[LevelObjectType.Player], transform.position, transform.rotation);
             Destroy(gameObject);
         }
     }

@@ -20,8 +20,8 @@ public class PlaceButtonScript : MonoBehaviour
     public void ActivatePlacerObject()
     {
         // Activates the placer object and sets its type
-        LevelEditorScript.PlacerObject.SetActive(true);
-        LevelEditorScript.PlacerObject.GetComponent<PlacerObjectScript>().CurrentType = objectType;
+        GameController.Instance.PlacerObject.SetActive(true);
+        GameController.Instance.PlacerObject.GetComponent<PlacerObjectScript>().CurrentType = objectType;
     }
 
     #endregion
