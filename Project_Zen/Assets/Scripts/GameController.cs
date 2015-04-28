@@ -81,7 +81,7 @@ public class GameController
     /// </summary>
     /// <param name="blockPrefab">the prefab for the block object</param>
     /// <param name="playerStartPrefab">the prefab for the player start position object</param>
-    public void Initialize(GameObject playerPrefab, GameObject blockPrefab, GameObject playerStartPrefab)
+    public void Initialize(GameObject playerPrefab, GameObject previewBlockPrefab, GameObject blockPrefab, GameObject playerStartPrefab)
     {
         // Only initializes if needed
         if (objectPrefabs == null)
@@ -94,6 +94,7 @@ public class GameController
 
             // Adds objects to the object prefab dictionary
             objectPrefabs.Add(LevelObjectType.Player, playerPrefab);
+            objectPrefabs.Add(LevelObjectType.PreviewBlock, previewBlockPrefab);
             objectPrefabs.Add(LevelObjectType.Block, blockPrefab);
             objectPrefabs.Add(LevelObjectType.PlayerStart, playerStartPrefab);
         }

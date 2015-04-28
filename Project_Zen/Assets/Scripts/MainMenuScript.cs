@@ -10,6 +10,7 @@ public class MainMenuScript : UIScript
     #region Fields
 
     public GameObject playerPrefab;         // Prefab for the player object
+    public GameObject previewBlockPrefab;   // Prefab for the preview block
     public GameObject blockPrefab;          // Prefab for the generic block object
     public GameObject playerStartPrefab;    // Prefab for the player start position object
 
@@ -23,7 +24,7 @@ public class MainMenuScript : UIScript
     private void Start()
     {
         // Initializes the game controller
-        GameController.Instance.Initialize(playerPrefab, blockPrefab, playerStartPrefab);
+        GameController.Instance.Initialize(playerPrefab, previewBlockPrefab, blockPrefab, playerStartPrefab);
     }
 
     #endregion
