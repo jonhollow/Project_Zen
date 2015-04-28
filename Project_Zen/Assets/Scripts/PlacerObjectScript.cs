@@ -13,7 +13,6 @@ public class PlacerObjectScript : MonoBehaviour
     SpriteRenderer spriteRenderer;  // The sprite renderer
     Vector2 prevPosition;           // The previous position
     Vector2 dragStartPosition;      // The start position of the drag
-    bool dragStarted = false;       // Whether or not the drag has started
 
     List<List<GameObject>> previewBlocks;   // The 2D list of preview blocks
 
@@ -58,26 +57,30 @@ public class PlacerObjectScript : MonoBehaviour
         gameObject.SetActive(false);
 	}
 
+    /// <summary>
+    /// OnEnable is called when the object is enabled
+    /// </summary>
+    private void OnEnable()
+    {
+        // Only starts drag if it's been initialized
+        if (previewBlocks != null)
+        {
+            // Stores initial location
+            transform.position = GetNewPosition();
+            dragStartPosition = transform.position;
+
+            // Sets up preview blocks
+            UpdatePreviewBlocks();
+        }
+    }
+
 	/// <summary>
     /// Update is called once per frame
 	/// </summary>
 	private void Update() 
     {
-        // Checks for cancel
-        if (Input.GetKey(Constants.CANCEL_KEY))
-        { 
-            gameObject.SetActive(false);
-            return;
-        }
-
-	    // Gets the new position (mouse position, clamped to grid)
-        Vector2 position = GameController.Instance.MousePosition;
-        position /= Constants.GRID_SIZE;
-        position.x = (int)position.x - Constants.GRID_SIZE;
-        position.y = (int)position.y - Constants.GRID_SIZE;
-        position *= Constants.GRID_SIZE;
-
         // Checks if the position has changed
+        Vector2 position = GetNewPosition();
         if (position != prevPosition)
         {
             // Moves to the new position
@@ -85,24 +88,14 @@ public class PlacerObjectScript : MonoBehaviour
             prevPosition = position;
 
             // Updates preview blocks
-            if (dragStarted)
-            { UpdatePreviewBlocks(); }
-        }
-
-        // Checks for drag started or ended
-        if (!dragStarted && Input.GetMouseButton(0))
-        {
-            // Starts the drag, stores initial location
-            dragStarted = true;
-            dragStartPosition = position;
-
-            // Sets up preview blocks
             UpdatePreviewBlocks();
         }
-        else if (dragStarted && !Input.GetMouseButton(0))
+
+        // Checks for drag ended
+        if (!Input.GetMouseButton(0))
         {
-            // Ends the drag
-            dragStarted = false;
+            // Saves undo state
+            GameController.Instance.AddUndoState();
 
             // Clears the preview block list, turns them into objects
             for (int i = previewBlocks.Count - 1; i >= 0; i--)
@@ -123,17 +116,20 @@ public class PlacerObjectScript : MonoBehaviour
         }
 	}
 
-    ///// <summary>
-    ///// OnMouseDown is called when the mouse clicks this object's collider
-    ///// </summary>
-    //private void OnMouseDown()
-    //{
-    //    // Creates an object at the current location
-    //    GameController.Instance.CreateLevelObject(currentType, transform.position, transform.rotation);
+    /// <summary>
+    /// Gets the new position of the placer object
+    /// </summary>
+    private Vector2 GetNewPosition()
+    {
+        // Gets the new position (mouse position, clamped to grid)
+        Vector2 position = GameController.Instance.MousePosition;
+        position /= Constants.GRID_SIZE;
+        position.x = Mathf.Round(position.x);
+        position.y = Mathf.Round(position.y);
+        position *= Constants.GRID_SIZE;
 
-    //    // Deactivates the placer object
-    //    gameObject.SetActive(false);
-    //}
+        return position;
+    }
 
     /// <summary>
     /// Updates the preview blocks grid

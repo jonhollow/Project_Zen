@@ -107,7 +107,7 @@ public class GameController
     public void LoadLevel(string filename)
     {
         // Adds a copy of the current state to the undo history
-        undoHistory.StoreState(levelData.Clone());
+        AddUndoState();
 
         // Reloads the level data if possible
         LevelData loadedData = (LevelData)Serializer.DeserializeObject(filename);
@@ -168,9 +168,6 @@ public class GameController
     /// <param name="rotation">the rotation for the object</param>
     public void CreateLevelObject(LevelObjectType type, Vector2 position, Quaternion rotation)
     {
-        // Adds a copy of the current state to the undo history
-        undoHistory.StoreState(levelData.Clone());
-
         // Creates an object at the provided position and adds it to the object list
         levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], position, rotation));
 
@@ -182,6 +179,14 @@ public class GameController
 
         // Adds new object to the level data
         levelData.Objects.Add(newID, new LevelObjectData(position, type));
+    }
+
+    /// <summary>
+    /// Adds the current state to the undo history
+    /// </summary>
+    public void AddUndoState()
+    {
+        undoHistory.StoreState(levelData.Clone());
     }
 
     #endregion
