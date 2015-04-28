@@ -144,9 +144,10 @@ public class GameController
     /// </summary>
     public void OpenLevelEditor()
     {
-        // Sets in level editor, clears undo history, and loads the level editor
+        // Sets in level editor, clears undo history & level data, and loads the level editor
         InLevelEditor = true;
         undoHistory.Clear();
+        levelData.Clear();
         Application.LoadLevel(Constants.EDITOR_SCENE);
     }
 
@@ -155,8 +156,9 @@ public class GameController
     /// </summary>
     public void OpenGame()
     {
-        // Sets not in level editor and loads the game
+        // Sets not in level editor, clears level data, and loads the game
         InLevelEditor = false;
+        levelData.Clear();
         Application.LoadLevel(Constants.GAME_SCENE);
     }
 
@@ -186,6 +188,7 @@ public class GameController
     /// </summary>
     public void AddUndoState()
     {
+        Debug.Log(undoHistory.Empty);
         undoHistory.StoreState(levelData.Clone());
     }
 

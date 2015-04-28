@@ -45,6 +45,14 @@ public class LevelData
     #region Public Methods
 
     /// <summary>
+    /// Clears the level data
+    /// </summary>
+    public void Clear()
+    {
+        objects.Clear();
+    }
+
+    /// <summary>
     /// Makes a copy of the level data
     /// </summary>
     /// <returns>the copy</returns>
