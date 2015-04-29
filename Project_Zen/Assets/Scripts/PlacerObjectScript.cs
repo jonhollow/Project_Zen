@@ -11,10 +11,10 @@ public class PlacerObjectScript : MonoBehaviour
 
     LevelObjectType currentType;    // The placer object's current object type
     SpriteRenderer spriteRenderer;  // The sprite renderer
-    Vector2 prevPosition;           // The previous position
-    Vector2 dragStartPosition;      // The start position of the drag
+    GridPosition prevGridPosition;      
+    GridPosition dragStartGridPosition;
 
-    List<List<GameObject>> previewBlocks;   // The 2D list of preview blocks
+    GameObject[,] previewBlocksGrid;    // The 2D array of preview blocks
 
     #endregion
 
@@ -50,8 +50,8 @@ public class PlacerObjectScript : MonoBehaviour
         // Stores the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Initializes preview block list
-        previewBlocks = new List<List<GameObject>>();
+        // Initializes preview block array
+        previewBlocksGrid = new GameObject[Constants.GRID_CELLS_Y, Constants.GRID_CELLS_X];
 
         // Deactivates the placer object
         gameObject.SetActive(false);
@@ -63,11 +63,12 @@ public class PlacerObjectScript : MonoBehaviour
     private void OnEnable()
     {
         // Only starts drag if it's been initialized
-        if (previewBlocks != null)
+        if (previewBlocksGrid != null)
         {
             // Stores initial location
-            transform.position = GetNewPosition();
-            dragStartPosition = transform.position;
+            prevGridPosition = GetNewGridPosition();
+            dragStartGridPosition = prevGridPosition;
+            transform.position = prevGridPosition.ToWorldPosition();
 
             // Sets up preview blocks
             UpdatePreviewBlocks();
@@ -80,13 +81,13 @@ public class PlacerObjectScript : MonoBehaviour
 	private void Update() 
     {
         // Checks if the position has changed
-        Vector2 position = GetNewPosition();
-        if (position != prevPosition)
+        GridPosition newGridPosition = GetNewGridPosition();
+        if (newGridPosition != prevGridPosition)
         {
             // Moves to the new position
-            transform.position = position;
-            prevPosition = position;
-
+            prevGridPosition = newGridPosition;
+            transform.position = prevGridPosition.ToWorldPosition();
+            
             // Updates preview blocks
             UpdatePreviewBlocks();
         }
@@ -97,17 +98,21 @@ public class PlacerObjectScript : MonoBehaviour
             // Saves undo state
             GameController.Instance.AddUndoState();
 
-            // Clears the preview block list, turns them into objects
-            for (int i = previewBlocks.Count - 1; i >= 0; i--)
+            // Clears the preview block array, turns them into objects
+            for (int i = 0; i < previewBlocksGrid.GetLength(0); i++)
             {
-                for (int j = previewBlocks[i].Count - 1; j >= 0; j--)
+                for (int j = 0; j < previewBlocksGrid.GetLength(1); j++)
                 {
-                    // Creates an object at the preview block's location
-                    GameController.Instance.CreateLevelObject(currentType, previewBlocks[i][j].transform.position, transform.rotation);
+                    // If there is a preview block here
+                    if (previewBlocksGrid[i, j] != null)
+                    {
+                        // Creates an object at the preview block's grid location
+                        GameController.Instance.CreateLevelObject(currentType, new GridPosition(i, j), transform.rotation);
 
-                    // Removes the preview block
-                    MonoBehaviour.Destroy(previewBlocks[i][j]);
-                    previewBlocks[i].RemoveAt(j);
+                        // Removes the preview block
+                        Destroy(previewBlocksGrid[i, j]);
+                        previewBlocksGrid[i, j] = null; 
+                    }
                 }
             }
 
@@ -117,18 +122,12 @@ public class PlacerObjectScript : MonoBehaviour
 	}
 
     /// <summary>
-    /// Gets the new position of the placer object
+    /// Gets the new grid position of the placer object
     /// </summary>
-    private Vector2 GetNewPosition()
+    private GridPosition GetNewGridPosition()
     {
         // Gets the new position (mouse position, clamped to grid)
-        Vector2 position = GameController.Instance.MousePosition;
-        position /= Constants.GRID_SIZE;
-        position.x = Mathf.Round(position.x);
-        position.y = Mathf.Round(position.y);
-        position *= Constants.GRID_SIZE;
-
-        return position;
+        return GameController.WorldToGrid(GameController.Instance.MousePosition);
     }
 
     /// <summary>
@@ -136,69 +135,36 @@ public class PlacerObjectScript : MonoBehaviour
     /// </summary>
     private void UpdatePreviewBlocks()
     {
-        // Gets needed rows and columns
-        int xDirection = (int)Mathf.Sign(transform.position.x - dragStartPosition.x);
-        int yDirection = (int)Mathf.Sign(transform.position.y - dragStartPosition.y);
-        int neededRows = (int)(Mathf.Abs(transform.position.y - dragStartPosition.y) / Constants.GRID_SIZE) + 1;
-        int neededColumns = (int)(Mathf.Abs(transform.position.x - dragStartPosition.x) / Constants.GRID_SIZE) + 1;
-
-        // Checks for need more rows
-        while (previewBlocks.Count < neededRows)
+        // Updates the grid
+        for (int i = 0; i < previewBlocksGrid.GetLength(0); i++)
         {
-            previewBlocks.Add(new List<GameObject>());
-
-            // Populates the new row
-            while (previewBlocks[previewBlocks.Count - 1].Count < neededColumns)
+            for (int j = 0; j < previewBlocksGrid.GetLength(1); j++)
             {
-                previewBlocks[previewBlocks.Count - 1].Add((GameObject)Instantiate(GameController.Instance.ObjectPrefabs[LevelObjectType.PreviewBlock],
-                    new Vector2(dragStartPosition.x + (previewBlocks[previewBlocks.Count - 1].Count * Constants.GRID_SIZE * xDirection),
-                        dragStartPosition.y + ((previewBlocks.Count - 1) * Constants.GRID_SIZE * yDirection)), transform.rotation));
-            }
-
-        }
-
-        // Checks for need fewer rows
-        while (previewBlocks.Count > neededRows)
-        {
-            // Clears the last row
-            while (previewBlocks[previewBlocks.Count - 1].Count > 0)
-            {
-                MonoBehaviour.Destroy(previewBlocks[previewBlocks.Count - 1][0]);
-                previewBlocks[previewBlocks.Count - 1].RemoveAt(0);
-            }
-
-            previewBlocks.RemoveAt(previewBlocks.Count - 1);
-        }
-
-        // Checks for need more columns
-        if (previewBlocks[0].Count < neededColumns)
-        {
-            // Loops through each row adding more columns
-            for (int i = 0; i < previewBlocks.Count; i++)
-            {
-                while (previewBlocks[i].Count < neededColumns)
+                // Checks if a block should be removed
+                if (previewBlocksGrid[i, j] != null &&
+                    (i < Mathf.Min(prevGridPosition.Row, dragStartGridPosition.Row) ||
+                    i > Mathf.Max(prevGridPosition.Row, dragStartGridPosition.Row) ||
+                    j < Mathf.Min(prevGridPosition.Column, dragStartGridPosition.Column) ||
+                    j > Mathf.Max(prevGridPosition.Column, dragStartGridPosition.Column)))
                 {
-                    previewBlocks[i].Add((GameObject)Instantiate(GameController.Instance.ObjectPrefabs[LevelObjectType.PreviewBlock],
-                        new Vector2(dragStartPosition.x + (previewBlocks[i].Count * Constants.GRID_SIZE * xDirection),
-                            dragStartPosition.y + (i * Constants.GRID_SIZE * yDirection)), transform.rotation));
+                    // Removes the preview block
+                    Destroy(previewBlocksGrid[i, j]);
+                    previewBlocksGrid[i, j] = null;
                 }
-            }
-        }
-
-        // Checks for need fewer columns
-        else if (previewBlocks[0].Count > neededColumns)
-        {
-            // Loops through each row removing columns
-            for (int i = 0; i < previewBlocks.Count; i++)
-            {
-                while (previewBlocks[i].Count > neededColumns)
+                // Checks if a block should be added
+                else if (previewBlocksGrid[i, j] == null && GameController.Instance.LevelGrid[i, j] == null &&
+                    i >= Mathf.Min(prevGridPosition.Row, dragStartGridPosition.Row) &&
+                    i <= Mathf.Max(prevGridPosition.Row, dragStartGridPosition.Row) &&
+                    j >= Mathf.Min(prevGridPosition.Column, dragStartGridPosition.Column) &&
+                    j <= Mathf.Max(prevGridPosition.Column, dragStartGridPosition.Column))
                 {
-                    MonoBehaviour.Destroy(previewBlocks[i][previewBlocks[i].Count - 1]);
-                    previewBlocks[i].RemoveAt(previewBlocks[i].Count - 1);
+                    // Adds a preview block
+                    previewBlocksGrid[i, j] = (GameObject)Instantiate(GameController.Instance.ObjectPrefabs[LevelObjectType.PreviewBlock],
+                        new GridPosition(i, j).ToWorldPosition(), transform.rotation);
                 }
             }
         }
     }
-    
+
     #endregion
 }

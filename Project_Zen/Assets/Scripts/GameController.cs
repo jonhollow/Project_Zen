@@ -37,6 +37,12 @@ public class GameController
     }
 
     /// <summary>
+    /// Gets the current level object grid
+    /// </summary>
+    public LevelObjectData[,] LevelGrid
+    { get { return levelData.Grid; } }
+
+    /// <summary>
     /// Gets the dictionary of level object prefabs
     /// </summary>
     public Dictionary<LevelObjectType, GameObject> ObjectPrefabs
@@ -166,21 +172,16 @@ public class GameController
     /// Creates an object in the level
     /// </summary>
     /// <param name="type">the type of object to create</param>
-    /// <param name="position">the position at which to create the object</param>
+    /// <param name="gridPosition">the grid position</param>
     /// <param name="rotation">the rotation for the object</param>
-    public void CreateLevelObject(LevelObjectType type, Vector2 position, Quaternion rotation)
+    public void CreateLevelObject(LevelObjectType type, GridPosition gridPosition, Quaternion rotation)
     {
-        // Creates an object at the provided position and adds it to the object list
-        levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], position, rotation));
+        // Adds the object into the level data at its grid position
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = new LevelObjectData(gridPosition, type);
 
-        // Creates a unique ID for the new object
-        string newID;
-        do { newID = "Object" + Random.Range(int.MinValue, int.MaxValue); }
-        while (levelData.Objects.ContainsKey(newID));
-        levelObjects[levelObjects.Count - 1].GetComponent<LevelObjectScript>().ID = newID;
-
-        // Adds new object to the level data
-        levelData.Objects.Add(newID, new LevelObjectData(position, type));
+        // Creates an object at its world position and adds it to the object list
+        levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], levelData.Grid[gridPosition.Row, 
+            gridPosition.Column].Position, rotation));
     }
 
     /// <summary>
@@ -188,8 +189,23 @@ public class GameController
     /// </summary>
     public void AddUndoState()
     {
-        Debug.Log(undoHistory.Empty);
         undoHistory.StoreState(levelData.Clone());
+    }
+
+    /// <summary>
+    /// Converts world coordinates to grid coordinates
+    /// </summary>
+    /// <param name="worldLocation">the world location</param>
+    /// <returns>the grid location</returns>
+    public static GridPosition WorldToGrid(Vector2 worldLocation)
+    {
+        worldLocation.x -= Constants.GRID_X_OFFSET;
+        worldLocation.y -= Constants.GRID_Y_OFFSET;
+        worldLocation /= Constants.GRID_SIZE;
+        worldLocation.x = Mathf.Clamp(Mathf.Round(worldLocation.x), 0, Constants.GRID_CELLS_X);
+        worldLocation.y = Mathf.Clamp(Mathf.Round(worldLocation.y), 0, Constants.GRID_CELLS_Y);
+
+        return new GridPosition((int)worldLocation.y, (int)worldLocation.x);
     }
 
     #endregion
@@ -209,11 +225,18 @@ public class GameController
         }
 
         // Reconstructs the scene
-        foreach (KeyValuePair<string, LevelObjectData> data in levelData.Objects)
+        for (int i = 0; i < levelData.Grid.GetLength(0); i++)
         {
-            // Creates the object and gives it its ID
-            levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[data.Value.Type], data.Value.Position, Quaternion.Euler(Vector3.zero)));
-            levelObjects[levelObjects.Count - 1].GetComponent<LevelObjectScript>().ID = data.Key;
+            for (int j = 0; j < levelData.Grid.GetLength(1); j++)
+            {
+                // If there is an object here
+                if (levelData.Grid[i, j] != null)
+                {
+                    // Creates the object
+                    levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j].Type], 
+                        levelData.Grid[i, j].Position, Quaternion.Euler(Vector3.zero)));
+                }
+            }
         }
     }
 

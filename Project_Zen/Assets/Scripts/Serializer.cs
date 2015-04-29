@@ -24,7 +24,6 @@ public static class Serializer
     {
         // Creates the file
         string filePath = Application.persistentDataPath + "/" + filename;
-        Debug.Log(filePath);
         FileStream stream = new FileStream(filePath, FileMode.Create);
 
         // Serializes and saves the object

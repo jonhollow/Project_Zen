@@ -16,17 +16,17 @@ public class LevelData
 {
     #region Fields
 
-    Dictionary<string, LevelObjectData> objects;    // Dictionary of the level's objects by ID
+    LevelObjectData[,] objectsGrid;
 
     #endregion
 
     #region Properties
 
     /// <summary>
-    /// Gets the dictionary of objects in the level, indexed by ID
+    /// Gets the object grid
     /// </summary>
-    public Dictionary<string, LevelObjectData> Objects
-    { get { return objects; } }
+    public LevelObjectData[,] Grid
+    { get { return objectsGrid; } }
 
     #endregion
 
@@ -37,7 +37,7 @@ public class LevelData
     /// </summary>
     public LevelData()
     {
-        objects = new Dictionary<string, LevelObjectData>();
+        objectsGrid = new LevelObjectData[Constants.GRID_CELLS_Y, Constants.GRID_CELLS_X];
     }
 
     #endregion
@@ -49,7 +49,12 @@ public class LevelData
     /// </summary>
     public void Clear()
     {
-        objects.Clear();
+        // Sets each item in the grid to null
+        for (int i = 0; i < objectsGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < objectsGrid.GetLength(1); j++)
+            { objectsGrid[i, j] = null; }
+        }
     }
 
     /// <summary>
@@ -61,10 +66,14 @@ public class LevelData
         // Makes a new level data
         LevelData copyData = new LevelData();
 
-        // Copies over each item of data
-        foreach (KeyValuePair<string, LevelObjectData> data in objects)
+        // Copies over the array
+        for (int i = 0; i < objectsGrid.GetLength(0); i++)
         {
-            copyData.objects.Add(data.Key, new LevelObjectData(data.Value.Position, data.Value.Type));
+            for (int j = 0; j < objectsGrid.GetLength(1); j++)
+            {
+                if (objectsGrid[i, j] != null)
+                { copyData.objectsGrid[i, j] = objectsGrid[i, j].Clone(); }
+            }
         }
 
         return copyData;

@@ -18,8 +18,7 @@ public class LevelObjectData
 
     LevelObjectType type;   // The type of object this is
 
-    float x;    // The x position of this object in the level
-    float y;    // The y position of this object in the level
+    GridPosition gridPosition;  // This object's position on the grid
 
     #endregion
 
@@ -29,7 +28,7 @@ public class LevelObjectData
     /// Gets the object's position
     /// </summary>
     public Vector2 Position
-    { get { return new Vector2(x, y); } }
+    { get { return gridPosition.ToWorldPosition(); } }
 
     /// <summary>
     /// Gets the object's type
@@ -44,13 +43,25 @@ public class LevelObjectData
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="position">The object's position</param>
+    /// <param name="gridPosition">The object's grid position</param>
     /// <param name="type">The object's type</param>
-    public LevelObjectData(Vector2 position, LevelObjectType type)
+    public LevelObjectData(GridPosition gridPosition, LevelObjectType type)
     {
-        this.x = position.x;
-        this.y = position.y;
+        this.gridPosition = gridPosition;
         this.type = type;
+    }
+
+    #endregion
+
+    #region Public Methods
+
+    /// <summary>
+    /// Makes a copy of the level object data
+    /// </summary>
+    /// <returns>the copy</returns>
+    public LevelObjectData Clone()
+    {
+        return new LevelObjectData(gridPosition, type);
     }
 
     #endregion
