@@ -68,6 +68,12 @@ public class GameController
     { get; set; }
 
     /// <summary>
+    /// Gets and sets the selection object for the editor
+    /// </summary>
+    public GameObject SelectionObject
+    { get; set; }
+
+    /// <summary>
     /// Gets the mouse position in world space
     /// </summary>
     public Vector2 MousePosition
@@ -262,9 +268,9 @@ public class GameController
     {
         worldLocation.x -= Constants.GRID_X_OFFSET;
         worldLocation.y -= Constants.GRID_Y_OFFSET;
-        worldLocation /= Constants.GRID_SIZE;
-        worldLocation.x = Mathf.Clamp(Mathf.Round(worldLocation.x), 0, Constants.GRID_CELLS_X);
-        worldLocation.y = Mathf.Clamp(Mathf.Round(worldLocation.y), 0, Constants.GRID_CELLS_Y);
+        worldLocation /= Constants.GRID_CELL_SIZE;
+        worldLocation.x = Mathf.Clamp(Mathf.Round(worldLocation.x), 0, Constants.GRID_COLUMNS);
+        worldLocation.y = Mathf.Clamp(Mathf.Round(worldLocation.y), 0, Constants.GRID_ROWS);
 
         return new GridPosition((int)worldLocation.y, (int)worldLocation.x);
     }

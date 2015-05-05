@@ -11,18 +11,4 @@ public class PlaceButtonScript : MonoBehaviour
     public LevelObjectType objectType;  // The type of object this button creates
 
     #endregion
-
-    #region Public Methods
-    
-    /// <summary>
-    /// Activates the placer object
-    /// </summary>
-    public void ActivatePlacerObject()
-    {
-        // Activates the placer object and sets its type
-        GameController.Instance.PlacerObject.SetActive(true);
-        GameController.Instance.PlacerObject.GetComponent<PlacerObjectScript>().CurrentType = objectType;
-    }
-
-    #endregion
 }

@@ -37,7 +37,7 @@ public class LevelData
     /// </summary>
     public LevelData()
     {
-        objectsGrid = new LevelObjectData[Constants.GRID_CELLS_Y, Constants.GRID_CELLS_X];
+        objectsGrid = new LevelObjectData[Constants.GRID_ROWS, Constants.GRID_COLUMNS];
     }
 
     #endregion

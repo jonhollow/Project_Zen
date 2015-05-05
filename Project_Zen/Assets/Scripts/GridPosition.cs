@@ -54,7 +54,7 @@ public class GridPosition
     /// <returns>the world location</returns>
     public Vector2 ToWorldPosition()
     {
-        return new Vector2((column * Constants.GRID_SIZE) + Constants.GRID_X_OFFSET, (row * Constants.GRID_SIZE) + Constants.GRID_Y_OFFSET);
+        return new Vector2((column * Constants.GRID_CELL_SIZE) + Constants.GRID_X_OFFSET, (row * Constants.GRID_CELL_SIZE) + Constants.GRID_Y_OFFSET);
     }
 
     #endregion

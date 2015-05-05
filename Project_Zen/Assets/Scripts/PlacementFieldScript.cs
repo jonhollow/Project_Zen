@@ -28,7 +28,7 @@ public class PlacementFieldScript : MonoBehaviour
             {
                 if (toggle.isOn)
                 {
-                    toggle.gameObject.GetComponent<PlaceButtonScript>().ActivatePlacerObject();
+                    GridDragObjectScript.ActivateDragObject(toggle.gameObject.GetComponent<PlaceButtonScript>().objectType);
                     break;
                 }
             }
