@@ -7,24 +7,44 @@ using System.Collections.Generic;
 /// </summary>
 public class UIScript : MonoBehaviour
 {
+    #region Fields
+
+    public GameObject saveMenu; // The menu for choosing a save file
+    public GameObject loadMenu; // The menu for choosing a file to load
+
+    #endregion
+
     #region Public Methods
 
     /// <summary>
-    /// Loads the level from the given file
+    /// Handles the load button being pressed
     /// </summary>
-    /// <param name="filename">the file name</param>
-    public void LoadLevel(string filename)
+    public void LoadButtonPressed()
     {
-        GameController.Instance.LoadLevel(filename);
+        // Opens the load menu if there are any saved levels
+        if (GameController.Instance.SavedLevels.Count > 0)
+        { loadMenu.SetActive(true); }
     }
 
     /// <summary>
-    /// Saves the level to the given file
+    /// Handles the save button being pressed
     /// </summary>
-    /// <param name="filename">the file name</param>
-    public void SaveLevel(string filename)
+    public void SaveButtonPressed()
     {
-        GameController.Instance.SaveLevel(filename);
+        // Only saves if level has a filename, otherwise acts as save as
+        if (GameController.Instance.CurrentLevelName != "")
+        { GameController.Instance.SaveLevel(); }
+        else
+        { SaveAsButtonPressed(); }
+    }
+
+    /// <summary>
+    /// Handles the save as button being pressed
+    /// </summary>
+    public void SaveAsButtonPressed()
+    {
+        // Opens the save menu
+        saveMenu.SetActive(true);
     }
 
     /// <summary>

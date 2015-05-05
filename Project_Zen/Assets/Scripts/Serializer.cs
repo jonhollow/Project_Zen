@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 /// <summary>
-/// Static class for serializing objects to a binary file
+/// Static class for serializing objects to and from binary files
 /// </summary>
 public static class Serializer
 {
@@ -20,10 +20,11 @@ public static class Serializer
     /// </summary>
     /// <param name="filename">the file name</param>
     /// <param name="objectToSerialize">the object to serialize</param>
-    public static void SerializeObject(string filename, System.Object objectToSerialize)
+    public static void Serialize(string filename, System.Object objectToSerialize)
     {
         // Creates the file
-        string filePath = Application.persistentDataPath + "/" + filename;
+        string filePath = GetFilePath(filename);
+        Directory.CreateDirectory(Path.GetDirectoryName(filePath));
         FileStream stream = new FileStream(filePath, FileMode.Create);
 
         // Serializes and saves the object
@@ -37,12 +38,12 @@ public static class Serializer
     /// </summary>
     /// <param name="filename">the file name</param>
     /// <returns>the deserialized object</returns>
-    public static System.Object DeserializeObject(string filename)
+    public static System.Object Deserialize(string filename)
     {
         System.Object deserializedObject = null;    // The object to be deserialized
 
         // Opens the file if it exists
-        string filePath = Application.persistentDataPath + "/" + filename;
+        string filePath = GetFilePath(filename);
         if (File.Exists(filePath))
         {
             FileStream stream = new FileStream(filePath, FileMode.Open);
@@ -61,10 +62,23 @@ public static class Serializer
     public static void DeleteFile(string filename)
     {
         // Gets the file path
-        string filePath = Application.persistentDataPath + "/" + filename;
+        string filePath = GetFilePath(filename);
 
         // Deletes the file
         File.Delete(filePath);
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Gets the full file path for the given filename
+    /// </summary>
+    /// <param name="filename">the file name</param>
+    private static string GetFilePath(string filename)
+    {
+        return Application.persistentDataPath + "/" + filename + Constants.FILE_SUFFIX;
     }
 
     #endregion

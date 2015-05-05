@@ -11,13 +11,14 @@ public class GameController
 
     static GameController instance; // Singleton instance of the controller
 
-    LevelData levelData;   // The serializable level data
-
+    LevelData levelData;        // The serializable level data
     UndoHistory undoHistory;    // The level editor's undo history
 
-    List<GameObject> levelObjects; // The list of objects in the level
+    Dictionary<LevelObjectType, GameObject> objectPrefabs;  // Dictionary of the level object prefabs
+    SortedDictionary<string, LevelData> savedLevels;        // Dictionary of the saved levels
 
-    Dictionary<LevelObjectType, GameObject> objectPrefabs;   // Dictionary of the level object prefabs
+    List<GameObject> levelObjects;      // The list of objects in the level
+    List<string> savedLevelFilenames;   // List with the filenames of the saved levels
 
     #endregion
 
@@ -49,6 +50,12 @@ public class GameController
     { get { return objectPrefabs; } }
 
     /// <summary>
+    /// Gets the sorted dictionary of saved levels
+    /// </summary>
+    public SortedDictionary<string, LevelData> SavedLevels
+    { get { return savedLevels; } }
+
+    /// <summary>
     /// Gets or sets whether the game is in the level editor or an actual level
     /// </summary>
     public bool InLevelEditor
@@ -65,6 +72,18 @@ public class GameController
     /// </summary>
     public Vector2 MousePosition
     { get { return Camera.main.ScreenToWorldPoint(Input.mousePosition); } }
+
+    /// <summary>
+    /// Gets or sets whether the game is paused
+    /// </summary>
+    public bool Paused
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the name of the currently loaded level
+    /// </summary>
+    public string CurrentLevelName
+    { get; set; }
 
     #endregion
 
@@ -93,30 +112,55 @@ public class GameController
         if (objectPrefabs == null)
         {
             // Initializes fields
+            Paused = false;
             objectPrefabs = new Dictionary<LevelObjectType, GameObject>();
             levelData = new LevelData();
             levelObjects = new List<GameObject>();
             undoHistory = new UndoHistory();
+            savedLevels = new SortedDictionary<string, LevelData>();
+            CurrentLevelName = "";
 
             // Adds objects to the object prefab dictionary
             objectPrefabs.Add(LevelObjectType.Player, playerPrefab);
             objectPrefabs.Add(LevelObjectType.PreviewBlock, previewBlockPrefab);
             objectPrefabs.Add(LevelObjectType.Block, blockPrefab);
             objectPrefabs.Add(LevelObjectType.PlayerStart, playerStartPrefab);
+
+            // Loads the saved levels, if any
+            savedLevelFilenames = (List<string>)Serializer.Deserialize(Constants.LEVEL_NAMES_FILENAME);
+            if (savedLevelFilenames != null)
+            {
+                // Loads the levels into the saved levels dictionary
+                for (int i = savedLevelFilenames.Count - 1; i >= 0; i--)
+                {
+                    // Checks to make sure the level wasn't deleted offline
+                    LevelData loadedLevel = LoadLevelFromFile(savedLevelFilenames[i]);
+                    if (loadedLevel != null)
+                    { savedLevels.Add(savedLevelFilenames[i], loadedLevel); }
+                    else
+                    {
+                        savedLevelFilenames.RemoveAt(i);
+                        Serializer.Serialize(Constants.LEVEL_NAMES_FILENAME, savedLevelFilenames);
+                    }
+                }
+            }
+            else
+            {
+                savedLevelFilenames = new List<string>();
+            }
         }
     }
 
     /// <summary>
-    /// Loads the level from the given file
+    /// Loads the level from the current file name
     /// </summary>
-    /// <param name="filename">the file name</param>
-    public void LoadLevel(string filename)
+    public void LoadLevel()
     {
         // Adds a copy of the current state to the undo history
         AddUndoState();
 
         // Reloads the level data if possible
-        LevelData loadedData = (LevelData)Serializer.DeserializeObject(filename);
+        LevelData loadedData = (LevelData)Serializer.Deserialize(Constants.LEVEL_FILES_FOLDER + CurrentLevelName);
         if (loadedData != null)
         {
             levelData = loadedData;
@@ -125,12 +169,20 @@ public class GameController
     }
 
     /// <summary>
-    /// Saves the level to the given file
+    /// Saves the level to the current level file name
     /// </summary>
-    /// <param name="filename">the file name</param>
-    public void SaveLevel(string filename)
+    public void SaveLevel()
     {
-        Serializer.SerializeObject(filename, levelData);
+        // Saves the level data
+        Serializer.Serialize(Constants.LEVEL_FILES_FOLDER + CurrentLevelName, levelData);
+
+        // If the file is new, add it to the saved levels dictionary and level filenames list
+        if (!savedLevelFilenames.Contains(CurrentLevelName))
+        {
+            savedLevels.Add(CurrentLevelName, levelData);
+            savedLevelFilenames.Add(CurrentLevelName);
+            Serializer.Serialize(Constants.LEVEL_NAMES_FILENAME, savedLevelFilenames);
+        }
     }
 
     /// <summary>
@@ -193,6 +245,15 @@ public class GameController
     }
 
     /// <summary>
+    /// Adds the given object to the level
+    /// </summary>
+    /// <param name="objectToAdd">the object</param>
+    public void AddObjectToLevel(GameObject objectToAdd)
+    {
+        levelObjects.Add(objectToAdd);
+    }
+
+    /// <summary>
     /// Converts world coordinates to grid coordinates
     /// </summary>
     /// <param name="worldLocation">the world location</param>
@@ -238,6 +299,16 @@ public class GameController
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Loads a level from the given file
+    /// </summary>
+    /// <param name="filename">the file name</param>
+    /// <returns>the loaded level, or null if level was not found</returns>
+    private LevelData LoadLevelFromFile(string filename)
+    {
+        return (LevelData)Serializer.Deserialize(Constants.LEVEL_FILES_FOLDER + filename);
     }
 
     #endregion

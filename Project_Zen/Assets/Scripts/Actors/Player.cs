@@ -54,6 +54,9 @@ public class Player : MonoBehaviour
 	/// </summary>
 	void Start() 
     {
+        // Adds the object to the level
+        GameController.Instance.AddObjectToLevel(gameObject);
+
         m_ControllerHandle = GetComponent<Controller2D>();
 
         m_Gravity = -(2 * m_JumpHeight) / Mathf.Pow(m_TimeToJumpApex, 2.0f);

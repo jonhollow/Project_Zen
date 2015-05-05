@@ -20,5 +20,9 @@ public static class Constants
     public const string GAME_SCENE = "Game";            // The name of the game scene
     public const string MAIN_MENU_SCENE = "MainMenu";   // The name of the main menu scene
 
+    public const string LEVEL_NAMES_FILENAME = "lvlnms";    // The name of the file in which the list of level filenames is stored
+    public const string LEVEL_FILES_FOLDER = "Levels/";     // The folder in which the level files are stored
+    public const string FILE_SUFFIX = ".zd";                // The file type for save data
+
     #endregion
 }

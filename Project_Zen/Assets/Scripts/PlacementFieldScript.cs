@@ -20,13 +20,17 @@ public class PlacementFieldScript : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
-        // Checks which placement option is selected
-        foreach (Toggle toggle in placementOptions)
+        // Checks for not paused
+        if (!GameController.Instance.Paused)
         {
-            if (toggle.isOn)
+            // Checks which placement option is selected
+            foreach (Toggle toggle in placementOptions)
             {
-                toggle.gameObject.GetComponent<PlaceButtonScript>().ActivatePlacerObject();
-                break;
+                if (toggle.isOn)
+                {
+                    toggle.gameObject.GetComponent<PlaceButtonScript>().ActivatePlacerObject();
+                    break;
+                }
             }
         }
     }
