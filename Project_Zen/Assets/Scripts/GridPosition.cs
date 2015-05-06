@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// Class that holds a grid position
 /// </summary>
 [Serializable]
-public class GridPosition
+public class GridPosition : IEquatable<GridPosition>
 {
     #region Fields
 
@@ -106,12 +106,25 @@ public class GridPosition
     }
 
     /// <summary>
+    /// Equals
+    /// </summary>
+    /// <param name="o">the other object</param>
+    /// <returns>whether or not the objects are equal</returns>
+    public bool Equals(GridPosition other)
+    {
+        try
+        { return this == other; }
+        catch
+        { return false; }
+    }
+
+    /// <summary>
     /// GetHashCode
     /// </summary>
     /// <returns>the hash code</returns>
     public override int GetHashCode()
     {
-        return row + column;
+        return (row * 100) + column;
     }
 
     #endregion

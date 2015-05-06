@@ -55,7 +55,8 @@ public class PlacingObjectScript : GridDragObjectScript
     /// </summary>
     protected override void EndDrag()
     {
-        base.EndDrag();
+        // Saves the undo state
+        GameController.Instance.AddUndoState();
 
         // Creates objects from the preview block array
         for (int i = 0; i < previewBlocksGrid.GetLength(0); i++)
@@ -70,6 +71,8 @@ public class PlacingObjectScript : GridDragObjectScript
                 }
             }
         }
+
+        base.EndDrag();
     }
 
     /// <summary>

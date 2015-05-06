@@ -9,5 +9,7 @@ public enum LevelObjectType
     Block,
     PreviewBlock,
     PlayerStart,
-    Player
+    Player,
+    Empty,
+    Unknown
 }

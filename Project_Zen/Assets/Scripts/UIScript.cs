@@ -9,7 +9,6 @@ public class UIScript : MonoBehaviour
 {
     #region Fields
 
-    public GameObject saveMenu; // The menu for choosing a save file
     public GameObject loadMenu; // The menu for choosing a file to load
 
     #endregion
@@ -24,35 +23,6 @@ public class UIScript : MonoBehaviour
         // Opens the load menu if there are any saved levels
         if (GameController.Instance.SavedLevels.Count > 0)
         { loadMenu.SetActive(true); }
-    }
-
-    /// <summary>
-    /// Handles the save button being pressed
-    /// </summary>
-    public void SaveButtonPressed()
-    {
-        // Only saves if level has a filename, otherwise acts as save as
-        if (GameController.Instance.CurrentLevelName != "")
-        { GameController.Instance.SaveLevel(); }
-        else
-        { SaveAsButtonPressed(); }
-    }
-
-    /// <summary>
-    /// Handles the save as button being pressed
-    /// </summary>
-    public void SaveAsButtonPressed()
-    {
-        // Opens the save menu
-        saveMenu.SetActive(true);
-    }
-
-    /// <summary>
-    /// Returns to the previous undo state
-    /// </summary>
-    public void UndoLastChange()
-    {
-        GameController.Instance.UndoLastChange();
     }
 
     /// <summary>

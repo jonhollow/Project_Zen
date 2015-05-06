@@ -17,7 +17,7 @@ public class PlayerStartPositionScript : MonoBehaviour
         if (!GameController.Instance.InLevelEditor)
         {
             Instantiate(GameController.Instance.ObjectPrefabs[LevelObjectType.Player], transform.position, transform.rotation);
-            Destroy(gameObject);
+            GameController.Instance.DestroyLevelObject(GameController.WorldToGrid(transform.position));
         }
     }
 

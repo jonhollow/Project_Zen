@@ -15,9 +15,10 @@ public class GameController
     UndoHistory undoHistory;    // The level editor's undo history
 
     Dictionary<LevelObjectType, GameObject> objectPrefabs;  // Dictionary of the level object prefabs
+    Dictionary<GridPosition, GameObject> levelObjects;      // Dictionary of objects in the level
     SortedDictionary<string, LevelData> savedLevels;        // Dictionary of the saved levels
 
-    List<GameObject> levelObjects;      // The list of objects in the level
+    //List<GameObject> levelObjects;      // The list of objects in the level
     List<string> savedLevelFilenames;   // List with the filenames of the saved levels
 
     #endregion
@@ -121,7 +122,7 @@ public class GameController
             Paused = false;
             objectPrefabs = new Dictionary<LevelObjectType, GameObject>();
             levelData = new LevelData();
-            levelObjects = new List<GameObject>();
+            levelObjects = new Dictionary<GridPosition, GameObject>();
             undoHistory = new UndoHistory();
             savedLevels = new SortedDictionary<string, LevelData>();
             CurrentLevelName = "";
@@ -200,6 +201,9 @@ public class GameController
         {
             levelData = undoHistory.GetPreviousState();
             RestoreToLevelData();
+
+            // Clears the selection
+            GridDragObjectScript.ClearSelection();
         }
     }
 
@@ -238,8 +242,19 @@ public class GameController
         levelData.Grid[gridPosition.Row, gridPosition.Column] = new LevelObjectData(gridPosition, type);
 
         // Creates an object at its world position and adds it to the object list
-        levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], levelData.Grid[gridPosition.Row, 
+        levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], levelData.Grid[gridPosition.Row, 
             gridPosition.Column].Position, rotation));
+    }
+
+    /// <summary>
+    /// Destroys the level object at the given position
+    /// </summary>
+    /// <param name="gridPosition">the position</param>
+    public void DestroyLevelObject(GridPosition gridPosition)
+    {
+        MonoBehaviour.Destroy(levelObjects[gridPosition]);
+        levelObjects.Remove(gridPosition);
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = null;
     }
 
     /// <summary>
@@ -253,10 +268,11 @@ public class GameController
     /// <summary>
     /// Adds the given object to the level
     /// </summary>
+    /// <param name="gridPosition">the object's grid position</param>
     /// <param name="objectToAdd">the object</param>
-    public void AddObjectToLevel(GameObject objectToAdd)
+    public void AddObjectToLevel(GridPosition gridPosition, GameObject objectToAdd)
     {
-        levelObjects.Add(objectToAdd);
+        levelObjects.Add(gridPosition, objectToAdd);
     }
 
     /// <summary>
@@ -269,10 +285,8 @@ public class GameController
         worldLocation.x -= Constants.GRID_X_OFFSET;
         worldLocation.y -= Constants.GRID_Y_OFFSET;
         worldLocation /= Constants.GRID_CELL_SIZE;
-        worldLocation.x = Mathf.Clamp(Mathf.Round(worldLocation.x), 0, Constants.GRID_COLUMNS);
-        worldLocation.y = Mathf.Clamp(Mathf.Round(worldLocation.y), 0, Constants.GRID_ROWS);
 
-        return new GridPosition((int)worldLocation.y, (int)worldLocation.x);
+        return new GridPosition(Mathf.RoundToInt(worldLocation.y), Mathf.RoundToInt(worldLocation.x));
     }
 
     #endregion
@@ -285,11 +299,9 @@ public class GameController
     private void RestoreToLevelData()
     {
         // Destroys everything currently in the scene
-        while (levelObjects.Count > 0)
-        {
-            MonoBehaviour.Destroy(levelObjects[0]);
-            levelObjects.RemoveAt(0);
-        }
+        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
+        { MonoBehaviour.Destroy(ob.Value); }
+        levelObjects.Clear();
 
         // Reconstructs the scene
         for (int i = 0; i < levelData.Grid.GetLength(0); i++)
@@ -300,7 +312,7 @@ public class GameController
                 if (levelData.Grid[i, j] != null)
                 {
                     // Creates the object
-                    levelObjects.Add((GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j].Type], 
+                    levelObjects.Add(new GridPosition(i, j), (GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j].Type], 
                         levelData.Grid[i, j].Position, Quaternion.Euler(Vector3.zero)));
                 }
             }

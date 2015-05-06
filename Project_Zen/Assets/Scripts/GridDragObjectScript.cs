@@ -44,6 +44,56 @@ public abstract class GridDragObjectScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears the preview blocks grid
+    /// </summary>
+    public static void ClearSelection()
+    {
+        // Checks for grid hasn't been created yet
+        if (previewBlocksGrid == null)
+        { previewBlocksGrid = new GameObject[Constants.GRID_ROWS, Constants.GRID_COLUMNS]; }
+        else
+        {
+            // Loops through the preview blocks grid
+            for (int i = 0; i < previewBlocksGrid.GetLength(0); i++)
+            {
+                for (int j = 0; j < previewBlocksGrid.GetLength(1); j++)
+                {
+                    if (previewBlocksGrid[i, j] != null)
+                    {
+                        // Removes the preview block
+                        Destroy(previewBlocksGrid[i, j]);
+                        previewBlocksGrid[i, j] = null;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Deletes all selected objects
+    /// </summary>
+    public static void DeleteSelection()
+    {
+        // Saves undo state
+        GameController.Instance.AddUndoState();
+
+        // Loops through the preview blocks grid
+        for (int i = 0; i < previewBlocksGrid.GetLength(0); i++)
+        {
+            for (int j = 0; j < previewBlocksGrid.GetLength(1); j++)
+            {
+                if (previewBlocksGrid[i, j] != null)
+                {
+                    // Removes the preview block and object
+                    Destroy(previewBlocksGrid[i, j]);
+                    previewBlocksGrid[i, j] = null;
+                    GameController.Instance.DestroyLevelObject(new GridPosition(i, j));
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Protected Methods
@@ -54,7 +104,7 @@ public abstract class GridDragObjectScript : MonoBehaviour
     protected virtual void Start() 
     {
         // Initializes preview block array
-        previewBlocksGrid = new GameObject[Constants.GRID_ROWS, Constants.GRID_COLUMNS];
+        ClearSelection();
 
         // Deactivates the object
         gameObject.SetActive(false);
@@ -67,15 +117,21 @@ public abstract class GridDragObjectScript : MonoBehaviour
     {
         // Only starts drag if it's been initialized
         if (previewBlocksGrid != null)
-        {
-            // Stores initial location
-            prevGridPosition = GetNewGridPosition();
-            dragStartGridPosition = prevGridPosition;
-            transform.position = prevGridPosition.ToWorldPosition();
+        { StartDrag(); }
+    }
 
-            // Sets up preview blocks
-            UpdatePreviewBlocks();
-        }
+    /// <summary>
+    /// Starts the drag
+    /// </summary>
+    protected virtual void StartDrag()
+    {
+        // Stores initial location
+        prevGridPosition = GetNewGridPosition();
+        dragStartGridPosition = prevGridPosition;
+        transform.position = prevGridPosition.ToWorldPosition();
+
+        // Sets up preview blocks
+        UpdatePreviewBlocks();
     }
 
 	/// <summary>
@@ -99,9 +155,6 @@ public abstract class GridDragObjectScript : MonoBehaviour
         if (!Input.GetMouseButton(0))
         {
             EndDrag();
-
-            // Deactivates placer object
-            gameObject.SetActive(false);
         }
 	}
 
@@ -113,13 +166,14 @@ public abstract class GridDragObjectScript : MonoBehaviour
         // Gets the new position (mouse position, clamped to grid)
         return GameController.WorldToGrid(GameController.Instance.MousePosition);
     }
+
     /// <summary>
     /// Ends the drag
     /// </summary>
     protected virtual void EndDrag()
     {
-        // Saves undo state
-        GameController.Instance.AddUndoState();
+        // Deactivates the object
+        gameObject.SetActive(false);
     }
 
     /// <summary>
