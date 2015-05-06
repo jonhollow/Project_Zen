@@ -193,6 +193,19 @@ public class GameController
     }
 
     /// <summary>
+    /// Deletes the current level file
+    /// </summary>
+    public void DeleteLevel()
+    {
+        // Deletes the file
+        Serializer.DeleteFile(Constants.LEVEL_FILES_FOLDER + CurrentLevelName);
+
+        // Removes the file from the saved levels dictionary and level filenames list
+        savedLevels.Remove(CurrentLevelName);
+        savedLevelFilenames.Remove(CurrentLevelName);
+    }
+
+    /// <summary>
     /// Returns to the previous undo state
     /// </summary>
     public void UndoLastChange()

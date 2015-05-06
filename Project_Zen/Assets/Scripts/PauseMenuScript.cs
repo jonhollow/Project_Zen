@@ -13,6 +13,19 @@ public class PauseMenuScript : MonoBehaviour
 
     #endregion
 
+    #region Public Methods
+
+    /// <summary>
+    /// Handles the cancel button being pressed
+    /// </summary>
+    public void CancelButtonPressed()
+    {
+        // Hides the load menu
+        gameObject.SetActive(false);
+    }
+
+    #endregion
+
     #region Protected Methods
 
     /// <summary>

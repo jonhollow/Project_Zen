@@ -54,6 +54,14 @@ public class EditorUIScript : UIScript
         GridDragObjectScript.DeleteSelection();
     }
 
+    /// <summary>
+    /// Handles the deselect button being pressed
+    /// </summary>
+    public void DeselectButtonPressed()
+    {
+        GridDragObjectScript.ClearSelection();
+    }
+
     #endregion
 
     #region Private Methods
@@ -88,6 +96,10 @@ public class EditorUIScript : UIScript
         // Checks for deselect
         if (Input.GetKeyDown(KeyCode.Escape))
         { GridDragObjectScript.ClearSelection(); }
+
+        // Checks for delete
+        if (Input.GetKeyDown(KeyCode.Delete))
+        { GridDragObjectScript.DeleteSelection(); }
     }
 
     #endregion

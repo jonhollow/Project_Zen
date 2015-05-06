@@ -22,6 +22,26 @@ public class LoadMenuScript : PauseMenuWFilesScript
 
             // Loads the level
             GameController.Instance.LoadLevel();
+
+            // Clears the selection
+            GridDragObjectScript.ClearSelection();
+        }
+    }
+
+    /// <summary>
+    /// Handles the delete file button being pressed
+    /// </summary>
+    public void DeleteFileButtonPressed()
+    {
+        // Checks if a level has been chosen
+        if (GameController.Instance.CurrentLevelName != "")
+        {
+            // Hides the load menu
+            gameObject.SetActive(false);
+
+            // Deletes the level
+            GameController.Instance.DeleteLevel();
+            GameController.Instance.CurrentLevelName = "";
         }
     }
 
