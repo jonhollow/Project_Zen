@@ -34,7 +34,7 @@ public abstract class GridDragObjectScript : MonoBehaviour
             GridPosition mousePosition = GetNewGridPosition();
             if (previewBlocksGrid[mousePosition.Row, mousePosition.Column] != null)
             { moving.SetActive(true); }
-            else if (GameController.Instance.LevelGrid[mousePosition.Row, mousePosition.Column] != null)
+            else if (GameController.Instance.LevelGrid[mousePosition.Row, mousePosition.Column] != LevelObjectType.Empty)
             { selecting.SetActive(true); }
             else
             {
@@ -205,7 +205,7 @@ public abstract class GridDragObjectScript : MonoBehaviour
                     previewBlocksGrid[i, j] = null;
                 }
                 // Checks if a block should be added
-                else if (previewBlocksGrid[i, j] == null && (GameController.Instance.LevelGrid[i, j] == null) == place &&
+                else if (previewBlocksGrid[i, j] == null && (GameController.Instance.LevelGrid[i, j] == LevelObjectType.Empty) == place &&
                     i >= Mathf.Min(prevGridPosition.Row, dragStartGridPosition.Row) &&
                     i <= Mathf.Max(prevGridPosition.Row, dragStartGridPosition.Row) &&
                     j >= Mathf.Min(prevGridPosition.Column, dragStartGridPosition.Column) &&

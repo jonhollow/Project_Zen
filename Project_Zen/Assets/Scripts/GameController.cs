@@ -41,7 +41,7 @@ public class GameController
     /// <summary>
     /// Gets the current level object grid
     /// </summary>
-    public LevelObjectData[,] LevelGrid
+    public LevelObjectType[,] LevelGrid
     { get { return levelData.Grid; } }
 
     /// <summary>
@@ -249,11 +249,10 @@ public class GameController
     public void CreateLevelObject(LevelObjectType type, GridPosition gridPosition, Quaternion rotation)
     {
         // Adds the object into the level data at its grid position
-        levelData.Grid[gridPosition.Row, gridPosition.Column] = new LevelObjectData(gridPosition, type);
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = type;
 
         // Creates an object at its world position and adds it to the object list
-        levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], levelData.Grid[gridPosition.Row, 
-            gridPosition.Column].Position, rotation));
+        levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], gridPosition.ToWorldPosition(), rotation));
     }
 
     /// <summary>
@@ -264,7 +263,7 @@ public class GameController
     {
         MonoBehaviour.Destroy(levelObjects[gridPosition]);
         levelObjects.Remove(gridPosition);
-        levelData.Grid[gridPosition.Row, gridPosition.Column] = null;
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = LevelObjectType.Empty;
     }
 
     /// <summary>
@@ -319,11 +318,12 @@ public class GameController
             for (int j = 0; j < levelData.Grid.GetLength(1); j++)
             {
                 // If there is an object here
-                if (levelData.Grid[i, j] != null)
+                if (levelData.Grid[i, j] != LevelObjectType.Empty)
                 {
                     // Creates the object
-                    levelObjects.Add(new GridPosition(i, j), (GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j].Type], 
-                        levelData.Grid[i, j].Position, Quaternion.Euler(Vector3.zero)));
+                    GridPosition newPosition = new GridPosition(i, j);
+                    levelObjects.Add(newPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j]], 
+                        newPosition.ToWorldPosition(), Quaternion.Euler(Vector3.zero)));
                 }
             }
         }
