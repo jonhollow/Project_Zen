@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Actors\Controller2D.cs" />
      <Compile Include="Assets\Scripts\Actors\Player.cs" />
+     <Compile Include="Assets\Scripts\ChangeHistory.cs" />
      <Compile Include="Assets\Scripts\Constants.cs" />
      <Compile Include="Assets\Scripts\EditorUIScript.cs" />
      <Compile Include="Assets\Scripts\GameController.cs" />
@@ -70,7 +71,6 @@
      <Compile Include="Assets\Scripts\Timer.cs" />
      <Compile Include="Assets\Scripts\TimerFinishedEvent.cs" />
      <Compile Include="Assets\Scripts\UIScript.cs" />
-     <Compile Include="Assets\Scripts\UndoHistory.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

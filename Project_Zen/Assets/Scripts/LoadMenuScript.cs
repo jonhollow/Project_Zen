@@ -22,9 +22,6 @@ public class LoadMenuScript : PauseMenuWFilesScript
 
             // Loads the level
             GameController.Instance.LoadLevel();
-
-            // Clears the selection
-            GridDragObjectScript.ClearSelection();
         }
     }
 

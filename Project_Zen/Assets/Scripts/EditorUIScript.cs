@@ -41,9 +41,17 @@ public class EditorUIScript : UIScript
     /// <summary>
     /// Returns to the previous undo state
     /// </summary>
-    public void UndoLastChange()
+    public void UndoButtonPressed()
     {
         GameController.Instance.UndoLastChange();
+    }
+
+    /// <summary>
+    /// Undoes the last undo
+    /// </summary>
+    public void RedoButtonPressed()
+    {
+        GameController.Instance.RedoLastChange();
     }
 
     /// <summary>
@@ -93,13 +101,33 @@ public class EditorUIScript : UIScript
             }
         }
 
-        // Checks for deselect
+        // Checks for deselect key
         if (Input.GetKeyDown(KeyCode.Escape))
-        { GridDragObjectScript.ClearSelection(); }
+        { DeselectButtonPressed(); }
 
-        // Checks for delete
+        // Checks for delete key
         if (Input.GetKeyDown(KeyCode.Delete))
-        { GridDragObjectScript.DeleteSelection(); }
+        { DeleteButtonPressed(); }
+
+        // Checks for ctrl-key shortcuts
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
+            // Checks for undo key
+            if (Input.GetKeyDown(KeyCode.Z))
+            { UndoButtonPressed(); }
+
+            // Checks for redo key
+            if (Input.GetKeyDown(KeyCode.Y))
+            { RedoButtonPressed(); }
+
+            // Checks for save key
+            if (Input.GetKeyDown(KeyCode.S))
+            { SaveButtonPressed(); }
+
+            // Checks for cut key (just deletes for now)
+            if (Input.GetKeyDown(KeyCode.X))
+            { DeleteButtonPressed(); }
+        }
     }
 
     #endregion

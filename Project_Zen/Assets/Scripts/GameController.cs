@@ -12,7 +12,7 @@ public class GameController
     static GameController instance; // Singleton instance of the controller
 
     LevelData levelData;        // The serializable level data
-    UndoHistory undoHistory;    // The level editor's undo history
+    ChangeHistory undoHistory;    // The level editor's undo history
 
     Dictionary<LevelObjectType, GameObject> objectPrefabs;  // Dictionary of the level object prefabs
     Dictionary<GridPosition, GameObject> levelObjects;      // Dictionary of objects in the level
@@ -60,18 +60,6 @@ public class GameController
     /// Gets or sets whether the game is in the level editor or an actual level
     /// </summary>
     public bool InLevelEditor
-    { get; set; }
-
-    /// <summary>
-    /// Gets and sets the placer object for the editor
-    /// </summary>
-    public GameObject PlacerObject
-    { get; set; }
-
-    /// <summary>
-    /// Gets and sets the selection object for the editor
-    /// </summary>
-    public GameObject SelectionObject
     { get; set; }
 
     /// <summary>
@@ -123,7 +111,7 @@ public class GameController
             objectPrefabs = new Dictionary<LevelObjectType, GameObject>();
             levelData = new LevelData();
             levelObjects = new Dictionary<GridPosition, GameObject>();
-            undoHistory = new UndoHistory();
+            undoHistory = new ChangeHistory();
             savedLevels = new SortedDictionary<string, LevelData>();
             CurrentLevelName = "";
 
@@ -210,13 +198,22 @@ public class GameController
     /// </summary>
     public void UndoLastChange()
     {
-        if (!undoHistory.Empty)
+        if (undoHistory.HasUndo)
         {
-            levelData = undoHistory.GetPreviousState();
+            levelData = undoHistory.GetPreviousState(levelData);
             RestoreToLevelData();
+        }
+    }
 
-            // Clears the selection
-            GridDragObjectScript.ClearSelection();
+    /// <summary>
+    /// Undoes the last undo
+    /// </summary>
+    public void RedoLastChange()
+    {
+        if (undoHistory.HasRedo)
+        {
+            levelData = undoHistory.GetLastRedoState(levelData);
+            RestoreToLevelData();
         }
     }
 
@@ -330,6 +327,9 @@ public class GameController
                 }
             }
         }
+
+        // Clears the selection
+        GridDragObjectScript.ClearSelection();
     }
 
     /// <summary>
