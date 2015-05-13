@@ -16,7 +16,7 @@ public class LevelData
 {
     #region Fields
 
-    LevelObjectType[,] objectsGrid;
+    LevelObjectData[,] objectsGrid;
 
     #endregion
 
@@ -25,7 +25,7 @@ public class LevelData
     /// <summary>
     /// Gets the object grid
     /// </summary>
-    public LevelObjectType[,] Grid
+    public LevelObjectData[,] Grid
     { get { return objectsGrid; } }
 
     #endregion
@@ -37,8 +37,7 @@ public class LevelData
     /// </summary>
     public LevelData()
     {
-        objectsGrid = new LevelObjectType[Constants.GRID_ROWS, Constants.GRID_COLUMNS];
-        Clear();
+        objectsGrid = new LevelObjectData[Constants.GRID_ROWS, Constants.GRID_COLUMNS];
     }
 
     #endregion
@@ -50,11 +49,11 @@ public class LevelData
     /// </summary>
     public void Clear()
     {
-        // Sets each item in the grid to empty
+        // Sets each item in the grid to null
         for (int i = 0; i < objectsGrid.GetLength(0); i++)
         {
             for (int j = 0; j < objectsGrid.GetLength(1); j++)
-            { objectsGrid[i, j] = LevelObjectType.Empty; }
+            { objectsGrid[i, j] = null; }
         }
     }
 
@@ -71,7 +70,10 @@ public class LevelData
         for (int i = 0; i < objectsGrid.GetLength(0); i++)
         {
             for (int j = 0; j < objectsGrid.GetLength(1); j++)
-            { copyData.objectsGrid[i, j] = objectsGrid[i, j]; }
+            {
+                if (objectsGrid[i, j] != null)
+                { copyData.objectsGrid[i, j] = objectsGrid[i, j].Clone(); }
+            }
         }
 
         return copyData;

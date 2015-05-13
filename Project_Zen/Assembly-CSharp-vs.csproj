@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\GridDragObjectScript.cs" />
      <Compile Include="Assets\Scripts\GridPosition.cs" />
      <Compile Include="Assets\Scripts\LevelData.cs" />
+     <Compile Include="Assets\Scripts\LevelObjectData.cs" />
      <Compile Include="Assets\Scripts\LevelObjectType.cs" />
      <Compile Include="Assets\Scripts\LoadMenuScript.cs" />
      <Compile Include="Assets\Scripts\MainMenuScript.cs" />

@@ -43,8 +43,8 @@ public class MovingObjectScript : GridDragObjectScript
             for (int j = 0; j < startPositions.GetLength(1); j++)
             { 
                 if (previewBlocksGrid[i, j] != null)
-                { startPositions[i, j] = GameController.Instance.LevelGrid[i, j]; }
-                else if (GameController.Instance.LevelGrid[i, j] != LevelObjectType.Empty)
+                { startPositions[i, j] = GameController.Instance.LevelGrid[i, j].Type; }
+                else if (GameController.Instance.LevelGrid[i, j] != null)
                 { startPositions[i, j] = LevelObjectType.Unknown; }
                 else 
                 { startPositions[i, j] = LevelObjectType.Empty; }
@@ -95,7 +95,7 @@ public class MovingObjectScript : GridDragObjectScript
                         new GridPosition(i, j).ToWorldPosition(), transform.rotation);
 
                     // Checks if an object should be added
-                    if (GameController.Instance.LevelGrid[i, j] == LevelObjectType.Empty)
+                    if (GameController.Instance.LevelGrid[i, j] == null)
                     {
                         GameController.Instance.CreateLevelObject(startPositions[shiftedRow, shiftedCol],
                             new GridPosition(i, j), transform.rotation);

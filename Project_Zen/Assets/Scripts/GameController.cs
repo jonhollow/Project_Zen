@@ -41,7 +41,7 @@ public class GameController
     /// <summary>
     /// Gets the current level object grid
     /// </summary>
-    public LevelObjectType[,] LevelGrid
+    public LevelObjectData[,] LevelGrid
     { get { return levelData.Grid; } }
 
     /// <summary>
@@ -249,7 +249,7 @@ public class GameController
     public void CreateLevelObject(LevelObjectType type, GridPosition gridPosition, Quaternion rotation)
     {
         // Adds the object into the level data at its grid position
-        levelData.Grid[gridPosition.Row, gridPosition.Column] = type;
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = new LevelObjectData(type);
 
         // Creates an object at its world position and adds it to the object list
         levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], gridPosition.ToWorldPosition(), rotation));
@@ -263,7 +263,7 @@ public class GameController
     {
         MonoBehaviour.Destroy(levelObjects[gridPosition]);
         levelObjects.Remove(gridPosition);
-        levelData.Grid[gridPosition.Row, gridPosition.Column] = LevelObjectType.Empty;
+        levelData.Grid[gridPosition.Row, gridPosition.Column] = null;
     }
 
     /// <summary>
@@ -318,11 +318,11 @@ public class GameController
             for (int j = 0; j < levelData.Grid.GetLength(1); j++)
             {
                 // If there is an object here
-                if (levelData.Grid[i, j] != LevelObjectType.Empty)
+                if (levelData.Grid[i, j] != null)
                 {
                     // Creates the object
                     GridPosition newPosition = new GridPosition(i, j);
-                    levelObjects.Add(newPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j]], 
+                    levelObjects.Add(newPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[levelData.Grid[i, j].Type], 
                         newPosition.ToWorldPosition(), Quaternion.Euler(Vector3.zero)));
                 }
             }
