@@ -18,7 +18,9 @@ public class GameController
     Dictionary<GridPosition, GameObject> levelObjects;      // Dictionary of objects in the level
     SortedDictionary<string, LevelData> savedLevels;        // Dictionary of the saved levels
 
-    //List<GameObject> levelObjects;      // The list of objects in the level
+    Dictionary<bool, Sprite> blockTileSideSprites;
+    Dictionary<CornerAdjacency, Sprite> blockTileCornerSprites;
+
     List<string> savedLevelFilenames;   // List with the filenames of the saved levels
 
     #endregion
@@ -37,6 +39,18 @@ public class GameController
             return instance;
         }
     }
+
+    /// <summary>
+    /// Gets the block tile side sprite dictionary
+    /// </summary>
+    public Dictionary<bool, Sprite> BlockTileSideSprites
+    { get { return blockTileSideSprites; } }
+
+    /// <summary>
+    /// Gets the block tile corner sprite dictionary
+    /// </summary>
+    public Dictionary<CornerAdjacency, Sprite> BlockTileCornerSprites
+    { get { return blockTileCornerSprites; } }
 
     /// <summary>
     /// Gets the current level object grid
@@ -99,9 +113,14 @@ public class GameController
     /// <summary>
     /// Initializes the game controller
     /// </summary>
+    /// <param name="playerPrefab">the prefab for the player</param>
+    /// <param name="previewBlockPrefab">the prefab for the preview block object</param>
     /// <param name="blockPrefab">the prefab for the block object</param>
     /// <param name="playerStartPrefab">the prefab for the player start position object</param>
-    public void Initialize(GameObject playerPrefab, GameObject previewBlockPrefab, GameObject blockPrefab, GameObject playerStartPrefab)
+    /// <param name="blockTileSideSpritesArray">the array of sprites for block sides</param>
+    /// <param name="blockTileCornerSpritesArray">the array of sprites for block corners</param>
+    public void Initialize(GameObject playerPrefab, GameObject previewBlockPrefab, GameObject blockPrefab,
+        GameObject playerStartPrefab, Sprite[] blockTileSideSpritesArray, Sprite[] blockTileCornerSpritesArray)
     {
         // Only initializes if needed
         if (objectPrefabs == null)
@@ -114,12 +133,26 @@ public class GameController
             undoHistory = new ChangeHistory();
             savedLevels = new SortedDictionary<string, LevelData>();
             CurrentLevelName = "";
+            blockTileCornerSprites = new Dictionary<CornerAdjacency, Sprite>();
+            blockTileSideSprites = new Dictionary<bool, Sprite>();
 
             // Adds objects to the object prefab dictionary
             objectPrefabs.Add(LevelObjectType.Player, playerPrefab);
             objectPrefabs.Add(LevelObjectType.PreviewBlock, previewBlockPrefab);
             objectPrefabs.Add(LevelObjectType.Block, blockPrefab);
             objectPrefabs.Add(LevelObjectType.PlayerStart, playerStartPrefab);
+
+            // Adds the sprites into the block tile sprite dictionaries
+            blockTileSideSprites.Add(true, blockTileSideSpritesArray[0]);
+            blockTileSideSprites.Add(false, blockTileSideSpritesArray[1]);
+            blockTileCornerSprites.Add(new CornerAdjacency(true, true, true), blockTileCornerSpritesArray[0]);
+            blockTileCornerSprites.Add(new CornerAdjacency(true, false, true), blockTileCornerSpritesArray[1]);
+            blockTileCornerSprites.Add(new CornerAdjacency(true, true, false), blockTileCornerSpritesArray[2]);
+            blockTileCornerSprites.Add(new CornerAdjacency(true, false, false), blockTileCornerSpritesArray[2]);
+            blockTileCornerSprites.Add(new CornerAdjacency(false, true, true), blockTileCornerSpritesArray[3]);
+            blockTileCornerSprites.Add(new CornerAdjacency(false, false, true), blockTileCornerSpritesArray[3]);
+            blockTileCornerSprites.Add(new CornerAdjacency(false, false, false), blockTileCornerSpritesArray[4]);
+            blockTileCornerSprites.Add(new CornerAdjacency(false, true, false), blockTileCornerSpritesArray[4]);
 
             // Loads the saved levels, if any
             savedLevelFilenames = (List<string>)Serializer.Deserialize(Constants.LEVEL_NAMES_FILENAME);
@@ -253,6 +286,10 @@ public class GameController
 
         // Creates an object at its world position and adds it to the object list
         levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], gridPosition.ToWorldPosition(), rotation));
+
+        // Retiles everything
+        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
+        { ob.Value.GetComponent<TileScript>().Retile(); }
     }
 
     /// <summary>
@@ -264,6 +301,10 @@ public class GameController
         MonoBehaviour.Destroy(levelObjects[gridPosition]);
         levelObjects.Remove(gridPosition);
         levelData.Grid[gridPosition.Row, gridPosition.Column] = null;
+
+        // Retiles everything
+        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
+        { ob.Value.GetComponent<TileScript>().Retile(); }
     }
 
     /// <summary>

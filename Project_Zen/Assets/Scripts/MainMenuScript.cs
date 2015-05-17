@@ -14,6 +14,9 @@ public class MainMenuScript : UIScript
     public GameObject blockPrefab;          // Prefab for the generic block object
     public GameObject playerStartPrefab;    // Prefab for the player start position object
 
+    public Sprite[] blockTileSideSprites;
+    public Sprite[] blockTileCornerSprites; 
+
     #endregion
 
     #region Private Methods
@@ -24,7 +27,8 @@ public class MainMenuScript : UIScript
     private void Start()
     {
         // Initializes the game controller
-        GameController.Instance.Initialize(playerPrefab, previewBlockPrefab, blockPrefab, playerStartPrefab);
+        GameController.Instance.Initialize(playerPrefab, previewBlockPrefab, blockPrefab, 
+            playerStartPrefab, blockTileSideSprites, blockTileCornerSprites);
     }
 
     #endregion

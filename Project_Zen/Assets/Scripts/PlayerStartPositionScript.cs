@@ -4,7 +4,7 @@ using System.Collections;
 /// <summary>
 /// Script that controls a player start position object
 /// </summary>
-public class PlayerStartPositionScript : MonoBehaviour
+public class PlayerStartPositionScript : LevelObjectScript
 {
     #region Private Methods
 
