@@ -369,6 +369,10 @@ public class GameController
 
         // Clears the selection
         GridDragObjectScript.ClearSelection();
+
+        // Retiles everything
+        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
+        { ob.Value.GetComponent<LevelObjectScript>().Retile(); }
     }
 
     /// <summary>
@@ -392,7 +396,7 @@ public class GameController
         foreach (GridPosition pos in adjacent)
         {
             if (levelObjects.ContainsKey(pos))
-            { levelObjects[pos].GetComponent<TileScript>().Retile(); } 
+            { levelObjects[pos].GetComponent<LevelObjectScript>().Retile(); } 
         }
     }
 
