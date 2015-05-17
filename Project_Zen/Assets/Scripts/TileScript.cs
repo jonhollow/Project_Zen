@@ -26,11 +26,11 @@ public class TileScript : LevelObjectScript
         bool[] adjacencies = new bool[] { gridPos.Row + 1 < Constants.GRID_ROWS && GameController.Instance.LevelGrid[gridPos.Row + 1, gridPos.Column] != null,
             gridPos.Row + 1 < Constants.GRID_ROWS && gridPos.Column + 1 < Constants.GRID_COLUMNS && GameController.Instance.LevelGrid[gridPos.Row + 1, gridPos.Column + 1] != null, 
             gridPos.Column + 1 < Constants.GRID_COLUMNS && GameController.Instance.LevelGrid[gridPos.Row, gridPos.Column + 1] != null, 
-            gridPos.Row - 1 > 0 && gridPos.Column + 1 < Constants.GRID_COLUMNS && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column + 1] != null,
-            gridPos.Row - 1 > 0 && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column] != null,
-            gridPos.Row - 1 > 0 && gridPos.Column - 1 > 0 && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column - 1] != null,
-            gridPos.Column - 1 > 0 && GameController.Instance.LevelGrid[gridPos.Row, gridPos.Column - 1] != null,
-            gridPos.Row + 1 < Constants.GRID_ROWS && gridPos.Column - 1 > 0 && GameController.Instance.LevelGrid[gridPos.Row + 1, gridPos.Column - 1] != null };
+            gridPos.Row - 1 >= 0 && gridPos.Column + 1 < Constants.GRID_COLUMNS && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column + 1] != null,
+            gridPos.Row - 1 >= 0 && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column] != null,
+            gridPos.Row - 1 >= 0 && gridPos.Column - 1 >= 0 && GameController.Instance.LevelGrid[gridPos.Row - 1, gridPos.Column - 1] != null,
+            gridPos.Column - 1 >= 0 && GameController.Instance.LevelGrid[gridPos.Row, gridPos.Column - 1] != null,
+            gridPos.Row + 1 < Constants.GRID_ROWS && gridPos.Column - 1 >= 0 && GameController.Instance.LevelGrid[gridPos.Row + 1, gridPos.Column - 1] != null };
 
         // Loops through the sides
         for (int i = 0; i < edges.Length; i += 2)

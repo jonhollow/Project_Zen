@@ -287,9 +287,8 @@ public class GameController
         // Creates an object at its world position and adds it to the object list
         levelObjects.Add(gridPosition, (GameObject)MonoBehaviour.Instantiate(objectPrefabs[type], gridPosition.ToWorldPosition(), rotation));
 
-        // Retiles everything
-        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
-        { ob.Value.GetComponent<TileScript>().Retile(); }
+        // Retiles
+        RetileAdjacentObjects(gridPosition);
     }
 
     /// <summary>
@@ -302,9 +301,8 @@ public class GameController
         levelObjects.Remove(gridPosition);
         levelData.Grid[gridPosition.Row, gridPosition.Column] = null;
 
-        // Retiles everything
-        foreach (KeyValuePair<GridPosition, GameObject> ob in levelObjects)
-        { ob.Value.GetComponent<TileScript>().Retile(); }
+        // Retiles
+        RetileAdjacentObjects(gridPosition);
     }
 
     /// <summary>
@@ -381,6 +379,21 @@ public class GameController
     private LevelData LoadLevelFromFile(string filename)
     {
         return (LevelData)Serializer.Deserialize(Constants.LEVEL_FILES_FOLDER + filename);
+    }
+
+    /// <summary>
+    /// Retiles the objects adjacent to the given position
+    /// </summary>
+    /// <param name="position">the position</param>
+    private void RetileAdjacentObjects(GridPosition position)
+    {
+        List<GridPosition> adjacent = position.GetAdjacentPositions();
+
+        foreach (GridPosition pos in adjacent)
+        {
+            if (levelObjects.ContainsKey(pos))
+            { levelObjects[pos].GetComponent<TileScript>().Retile(); } 
+        }
     }
 
     #endregion

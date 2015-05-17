@@ -57,6 +57,41 @@ public class GridPosition : IEquatable<GridPosition>
         return new Vector2((column * Constants.GRID_CELL_SIZE) + Constants.GRID_X_OFFSET, (row * Constants.GRID_CELL_SIZE) + Constants.GRID_Y_OFFSET);
     }
 
+    /// <summary>
+    /// Gets a list of grid positions adjacent to this one
+    /// </summary>
+    /// <returns>the list of positions</returns>
+    public List<GridPosition> GetAdjacentPositions()
+    {
+        List<GridPosition> adjList = new List<GridPosition>();
+        
+        if (row - 1 >= 0)
+        { AddRowToList(adjList, row - 1); }
+        AddRowToList(adjList, row);
+        if (row + 1 < Constants.GRID_ROWS)
+        { AddRowToList(adjList, row + 1); }
+
+        return adjList;
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    /// <summary>
+    /// Adds a given row to an adjacency list
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="rowToAdd"></param>
+    private void AddRowToList(List<GridPosition> list, int rowToAdd)
+    {
+        if (column - 1 >= 0)
+        { list.Add(new GridPosition(rowToAdd, column - 1)); }
+        list.Add(new GridPosition(rowToAdd, column));
+        if (column + 1 < Constants.GRID_COLUMNS)
+        { list.Add(new GridPosition(rowToAdd, column + 1)); }
+    }
+
     #endregion
 
     #region Standard Overloads
