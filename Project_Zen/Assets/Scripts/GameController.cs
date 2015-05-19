@@ -259,6 +259,7 @@ public class GameController
         InLevelEditor = true;
         undoHistory.Clear();
         levelData.Clear();
+        levelObjects.Clear();
         Application.LoadLevel(Constants.EDITOR_SCENE);
     }
 
@@ -270,6 +271,7 @@ public class GameController
         // Sets not in level editor, clears level data, and loads the game
         InLevelEditor = false;
         levelData.Clear();
+        levelObjects.Clear();
         Application.LoadLevel(Constants.GAME_SCENE);
     }
 

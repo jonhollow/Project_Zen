@@ -12,6 +12,8 @@ public abstract class GridDragObjectScript : MonoBehaviour
     protected GridPosition prevGridPosition;        // The object's previous position on the grid
     protected GridPosition dragStartGridPosition;   // The position the drag started at
 
+    protected bool initialized = false; // Initialized flag to protect against update before initialization
+
     protected static GameObject[,] previewBlocksGrid;   // The 2D array of preview blocks
     protected static GameObject placing;
     protected static GameObject selecting;
@@ -105,6 +107,7 @@ public abstract class GridDragObjectScript : MonoBehaviour
     {
         // Initializes preview block array
         ClearSelection();
+        initialized = true;
 
         // Deactivates the object
         gameObject.SetActive(false);
@@ -116,7 +119,7 @@ public abstract class GridDragObjectScript : MonoBehaviour
     protected void OnEnable()
     {
         // Only starts drag if it's been initialized
-        if (previewBlocksGrid != null)
+        if (initialized)
         { StartDrag(); }
     }
 
