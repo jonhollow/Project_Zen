@@ -11,6 +11,10 @@ public class UIScript : MonoBehaviour
 
     public GameObject loadMenu; // The menu for choosing a file to load
 
+    const string EDITOR_SCENE = "LevelEditor";  // The name of the level editor scene
+    const string GAME_SCENE = "Game";           // The name of the game scene
+    const string MAIN_MENU_SCENE = "MainMenu";  // The name of the main menu scene
+
     #endregion
 
     #region Public Methods
@@ -21,7 +25,7 @@ public class UIScript : MonoBehaviour
     public void LoadButtonPressed()
     {
         // Opens the load menu if there are any saved levels
-        if (GameController.Instance.SavedLevels.Count > 0)
+        if (LevelController.Instance.SavedLevels.Count > 0)
         { loadMenu.SetActive(true); }
     }
 
@@ -30,7 +34,10 @@ public class UIScript : MonoBehaviour
     /// </summary>
     public void OpenLevelEditor()
     {
-        GameController.Instance.OpenLevelEditor();
+        // Sets in level editor, clears level data, and loads the level editor
+        LevelController.Instance.InLevelEditor = true;
+        LevelController.Instance.ClearData();
+        Application.LoadLevel(EDITOR_SCENE);
     }
 
     /// <summary>
@@ -38,15 +45,18 @@ public class UIScript : MonoBehaviour
     /// </summary>
     public void OpenGame()
     {
-        GameController.Instance.OpenGame();
+        // Sets not in level editor, clears level data, and loads the game
+        LevelController.Instance.InLevelEditor = false;
+        LevelController.Instance.ClearData();
+        Application.LoadLevel(GAME_SCENE);
     }
 
     /// <summary>
-    /// Returns to the main menu
+    /// Opens the main menu
     /// </summary>
-    public void ReturnToMainMenu()
+    public void OpenMainMenu()
     {
-        Application.LoadLevel(Constants.MAIN_MENU_SCENE);
+        Application.LoadLevel(MAIN_MENU_SCENE);
     }
 
     #endregion

@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
 	void Start() 
     {
         // Adds the player object to the level
-        GameController.Instance.AddObjectToLevel(GameController.WorldToGrid(transform.position), gameObject);
+        LevelController.Instance.AddObjectToLevel(LevelController.WorldToGrid(transform.position), gameObject);
 
         m_ControllerHandle = GetComponent<Controller2D>();
 

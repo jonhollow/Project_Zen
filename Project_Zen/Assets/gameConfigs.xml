@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configs>
+	<constants>
+		<gridcellsize>0.4</gridcellsize>
+	</constants>
+  <objecttypes>
+    <type>Player</type>
+    <type>Block</type>
+    <type>PlayerStart</type>
+  </objecttypes>
+	<assets>
+		<sprites>
+			<object>
+				<type>Block</type>
+				<file>Sprites/blockTile</file>
+			</object>
+		</sprites>
+		<prefabs>
+			<object>
+				<type>PreviewBlock</type>
+				<file>Prefabs/PreviewBlock</file>
+			</object>
+			<object>
+				<type>Player</type>
+				<file>Prefabs/Player</file>
+			</object>
+			<object>
+				<type>Block</type>
+				<file>Prefabs/TerrainBlock1</file>
+			</object>
+			<object>
+				<type>PlayerStart</type>
+				<file>Prefabs/PlayerStart</file>
+			</object>
+		</prefabs>
+	</assets>
+</configs>

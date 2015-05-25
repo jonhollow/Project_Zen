@@ -21,13 +21,13 @@ public class SaveMenuScript : PauseMenuWFilesScript
     public void SaveButtonPressed()
     {
         // Checks if a level name has been chosen
-        if (GameController.Instance.CurrentLevelName != "")
+        if (LevelController.Instance.CurrentLevelName != "")
         {
             // Hides the save menu
             gameObject.SetActive(false);
 
             // Saves the level
-            GameController.Instance.SaveLevel();
+            LevelController.Instance.SaveLevel();
         }
     }
 
@@ -37,7 +37,7 @@ public class SaveMenuScript : PauseMenuWFilesScript
     /// <param name="input">the input</param>
     public void HandleInputValueChanged(string input)
     {
-        GameController.Instance.CurrentLevelName = input;
+        LevelController.Instance.CurrentLevelName = input;
     }
 
     #endregion
@@ -53,7 +53,7 @@ public class SaveMenuScript : PauseMenuWFilesScript
         base.LevelFileValueChanged(value);
 
         // Updates the input field text
-        inputField.text = GameController.Instance.CurrentLevelName;
+        inputField.text = LevelController.Instance.CurrentLevelName;
     }
 
     #endregion

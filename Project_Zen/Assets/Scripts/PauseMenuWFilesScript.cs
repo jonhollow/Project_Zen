@@ -49,7 +49,7 @@ public class PauseMenuWFilesScript : PauseMenuScript
         { Initialize(); }
 
         // Creates the level file options
-        foreach (KeyValuePair<string, LevelData> level in GameController.Instance.SavedLevels)
+        foreach (KeyValuePair<string, LevelData> level in LevelController.Instance.SavedLevels)
         {
             // Creates a new toggle
             Toggle newToggle = Instantiate(levelFilePrefab);
@@ -102,7 +102,7 @@ public class PauseMenuWFilesScript : PauseMenuScript
         {
             if (toggle.isOn)
             { 
-                GameController.Instance.CurrentLevelName = toggle.GetComponentInChildren<Text>().text;
+                LevelController.Instance.CurrentLevelName = toggle.GetComponentInChildren<Text>().text;
                 break;
             }
         }

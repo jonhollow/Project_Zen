@@ -33,7 +33,7 @@ public class PauseMenuScript : MonoBehaviour
     /// </summary>
     protected virtual void OnEnable()
     {
-        GameController.Instance.Paused = true;
+        LevelController.Instance.Paused = true;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class PauseMenuScript : MonoBehaviour
     /// </summary>
     protected virtual void OnDisable()
     {
-        GameController.Instance.Paused = false;
+        LevelController.Instance.Paused = false;
     }
 
     #endregion

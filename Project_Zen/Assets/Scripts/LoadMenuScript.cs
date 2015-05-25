@@ -15,13 +15,13 @@ public class LoadMenuScript : PauseMenuWFilesScript
     public void LoadButtonPressed()
     {
         // Checks if a level has been chosen
-        if (GameController.Instance.CurrentLevelName != "")
+        if (LevelController.Instance.CurrentLevelName != "")
         {
             // Hides the load menu
             gameObject.SetActive(false);
 
             // Loads the level
-            GameController.Instance.LoadLevel();
+            LevelController.Instance.LoadLevel();
         }
     }
 
@@ -31,14 +31,14 @@ public class LoadMenuScript : PauseMenuWFilesScript
     public void DeleteFileButtonPressed()
     {
         // Checks if a level has been chosen
-        if (GameController.Instance.CurrentLevelName != "")
+        if (LevelController.Instance.CurrentLevelName != "")
         {
             // Hides the load menu
             gameObject.SetActive(false);
 
             // Deletes the level
-            GameController.Instance.DeleteLevel();
-            GameController.Instance.CurrentLevelName = "";
+            LevelController.Instance.DeleteLevel();
+            LevelController.Instance.CurrentLevelName = "";
         }
     }
 
@@ -54,7 +54,7 @@ public class LoadMenuScript : PauseMenuWFilesScript
         base.OnEnable();
 
         // Resets the level name
-        GameController.Instance.CurrentLevelName = "";
+        LevelController.Instance.CurrentLevelName = "";
     }
 
     #endregion
