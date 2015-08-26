@@ -124,6 +124,17 @@ public class EditorUIScript : UIScript
                     PanningObjectScript.StartPanning(2);
                 }
             }
+            #if !UNITY_STANDALONE && !UNITY_EDITOR
+
+            else
+            {
+                if (!Input.GetMouseButtonDown(0))
+                {
+                    mouseOverUI = false;
+                }
+            }
+            
+            #endif
 
             // Checks for deselect key
             if (Input.GetKeyDown(KeyCode.Escape))
